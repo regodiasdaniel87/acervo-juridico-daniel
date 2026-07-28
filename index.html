@@ -1,0 +1,2366 @@
+<!DOCTYPE html>
+<!-- saved from url=(0068)file:///C:/Users/regod/OneDrive/Desktop/sistema_juridico_daniel.html -->
+<html lang="pt-BR" data-theme="dark"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Acervo Jurídico — Advocacia</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+#login-screen{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:99999;font-family:var(--font-body);color:var(--text)}
+#login-screen .box{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:36px 32px;width:100%;max-width:340px;box-shadow:var(--shadow)}
+#login-screen .brandrow{display:flex;align-items:center;gap:10px;justify-content:center;margin-bottom:22px}
+#login-screen .brandrow .mark{width:34px;height:34px;border-radius:9px;background:linear-gradient(145deg,var(--accent),color-mix(in srgb, var(--accent) 55%, #000));color:#fff;font-family:var(--font-display);font-size:20px;font-weight:700;display:flex;align-items:center;justify-content:center}
+#login-screen h1{font-family:var(--font-display);font-size:19px;font-weight:700}
+#login-screen .sub{text-align:center;font-size:11px;color:var(--text-3);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:22px}
+#login-screen .fg{margin-bottom:14px;display:flex;flex-direction:column}
+#login-screen label{font-size:10.5px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:.7px;margin-bottom:6px}
+#login-screen input{padding:9px 11px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:13px;font-family:var(--font-body);background:var(--bg-soft);color:var(--text);outline:none}
+#login-screen input:focus{border-color:var(--accent)}
+#login-screen .err{color:var(--red);font-size:12px;margin-bottom:10px;min-height:16px}
+#login-screen button[type=submit]{width:100%;margin-top:4px;justify-content:center}
+.form-grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.form-grid2 .fg{display:flex;flex-direction:column;margin-bottom:12px}
+.form-grid2 .fg.full{grid-column:1/-1}
+.form-grid2 label{font-size:10.5px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px}
+.form-grid2 input,.form-grid2 select,.form-grid2 textarea{
+  padding:8px 10px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:13px;
+  font-family:var(--font-body);background:var(--bg-soft);color:var(--text);outline:none
+}
+.form-grid2 input:focus,.form-grid2 select:focus,.form-grid2 textarea:focus{border-color:var(--accent)}
+.m-foot{display:flex;justify-content:flex-end;gap:10px;padding:14px 20px;border-top:1px solid var(--border-soft)}
+</style>
+<style>
+/* ============================================================
+   TOKENS DE TEMA
+   ============================================================ */
+:root{
+  --font-body: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-display: Georgia, "Times New Roman", "Palatino Linotype", serif;
+  --font-mono: "SF Mono", "Cascadia Code", Consolas, "Roboto Mono", monospace;
+  --radius: 10px;
+  --radius-sm: 6px;
+  --sidebar-w: 262px;
+  --inspector-w: 400px;
+  --header-h: 56px;
+  --transition: .18s cubic-bezier(.4,0,.2,1);
+}
+html[data-theme="dark"]{
+  --bg: #0f1318;
+  --bg-soft: #131820;
+  --panel: #171d26;
+  --panel-2: #1d242f;
+  --panel-3: #232c39;
+  --border: #2a3341;
+  --border-soft: #222a36;
+  --text: #e7eaef;
+  --text-2: #9aa5b4;
+  --text-3: #6b7686;
+  --accent: #d2a94f;
+  --accent-soft: rgba(210,169,79,.14);
+  --accent-text: #0f1318;
+  --blue: #5b8def; --blue-soft: rgba(91,141,239,.15);
+  --green: #4cc38a; --green-soft: rgba(76,195,138,.15);
+  --red: #ef6461; --red-soft: rgba(239,100,97,.15);
+  --orange: #eda13e; --orange-soft: rgba(237,161,62,.15);
+  --purple: #a78bfa; --purple-soft: rgba(167,139,250,.15);
+  --shadow: 0 8px 28px rgba(0,0,0,.45);
+  --shadow-sm: 0 2px 8px rgba(0,0,0,.35);
+  --mark-bg: rgba(210,169,79,.35);
+}
+html[data-theme="light"]{
+  --bg: #f3f4f7;
+  --bg-soft: #eceef2;
+  --panel: #ffffff;
+  --panel-2: #f7f8fa;
+  --panel-3: #eef0f4;
+  --border: #dde1e8;
+  --border-soft: #e6e9ef;
+  --text: #1b2230;
+  --text-2: #5a6474;
+  --text-3: #8c95a5;
+  --accent: #9a7a2c;
+  --accent-soft: rgba(154,122,44,.12);
+  --accent-text: #ffffff;
+  --blue: #2f6bde; --blue-soft: rgba(47,107,222,.10);
+  --green: #1d9e66; --green-soft: rgba(29,158,102,.10);
+  --red: #d64541; --red-soft: rgba(214,69,65,.10);
+  --orange: #cd7f1e; --orange-soft: rgba(205,127,30,.12);
+  --purple: #7c5ce0; --purple-soft: rgba(124,92,224,.10);
+  --shadow: 0 10px 30px rgba(20,30,50,.12);
+  --shadow-sm: 0 2px 8px rgba(20,30,50,.08);
+  --mark-bg: rgba(210,169,79,.45);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  font-family:var(--font-body); background:var(--bg); color:var(--text);
+  font-size:13.5px; line-height:1.5; overflow:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+::selection{background:var(--accent-soft)}
+mark{background:var(--mark-bg); color:inherit; border-radius:3px; padding:0 1px}
+button{font-family:inherit; cursor:pointer}
+input,select{font-family:inherit; color:inherit}
+a{color:var(--blue); text-decoration:none}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-thumb{background:var(--border); border-radius:6px; border:2px solid var(--bg)}
+::-webkit-scrollbar-thumb:hover{background:var(--text-3)}
+::-webkit-scrollbar-track{background:transparent}
+
+/* ============================================================
+   LAYOUT PRINCIPAL
+   ============================================================ */
+#app{display:grid; grid-template-columns:var(--sidebar-w) 1fr; height:100vh; transition:grid-template-columns var(--transition)}
+#app.sidebar-collapsed{grid-template-columns:0 1fr}
+
+/* ---- Sidebar ---- */
+#sidebar{
+  background:var(--bg-soft); border-right:1px solid var(--border-soft);
+  display:flex; flex-direction:column; overflow:hidden; min-width:0;
+}
+.brand{
+  display:flex; align-items:center; gap:10px; padding:14px 16px 12px;
+  border-bottom:1px solid var(--border-soft); flex:none;
+}
+.brand-mark{
+  width:34px;height:34px; flex:none; border-radius:9px;
+  background:linear-gradient(145deg, var(--accent), color-mix(in srgb, var(--accent) 55%, #000));
+  color:#fff; font-family:var(--font-display); font-size:20px; font-weight:700;
+  display:flex; align-items:center; justify-content:center;
+  box-shadow:var(--shadow-sm);
+}
+.brand h1{font-family:var(--font-display); font-size:15.5px; font-weight:700; letter-spacing:.2px; white-space:nowrap}
+.brand small{display:block; font-family:var(--font-body); font-size:10.5px; color:var(--text-3); font-weight:400; letter-spacing:.4px; text-transform:uppercase}
+.side-search{padding:10px 12px; flex:none}
+.side-search .search-wrap{position:relative}
+.side-search input{
+  width:100%; background:var(--panel); border:1px solid var(--border); border-radius:var(--radius-sm);
+  padding:8px 30px 8px 32px; font-size:12.5px; color:var(--text); outline:none; transition:border var(--transition);
+}
+.side-search input:focus{border-color:var(--accent)}
+.side-search .icon{position:absolute; left:9px; top:8px; color:var(--text-3); pointer-events:none}
+.side-search kbd{
+  position:absolute; right:8px; top:7px; font-size:10px; color:var(--text-3);
+  border:1px solid var(--border); border-radius:4px; padding:1px 5px; background:var(--panel-2);
+}
+#sideNav{flex:1; overflow-y:auto; padding:6px 8px 16px}
+.nav-section{margin-top:12px}
+.nav-section > .nav-title{
+  display:flex; align-items:center; gap:6px; width:100%;
+  font-size:10.5px; text-transform:uppercase; letter-spacing:.9px; color:var(--text-3);
+  padding:4px 10px; background:none; border:none; text-align:left;
+}
+.nav-title .chev{transition:transform var(--transition)}
+.nav-section.closed .chev{transform:rotate(-90deg)}
+.nav-section.closed .nav-body{display:none}
+.nav-item{
+  display:flex; align-items:center; gap:9px; width:100%;
+  padding:7px 10px; border-radius:var(--radius-sm); border:none; background:none;
+  color:var(--text-2); font-size:13px; text-align:left; transition:background var(--transition), color var(--transition);
+}
+.nav-item:hover{background:var(--panel-2); color:var(--text)}
+.nav-item.active{background:var(--accent-soft); color:var(--accent); font-weight:600}
+.nav-item .icon{flex:none}
+.nav-item .lbl{flex:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.nav-count{
+  font-size:10.5px; font-family:var(--font-mono); color:var(--text-3);
+  background:var(--panel-2); border:1px solid var(--border-soft); border-radius:20px; padding:0 7px; line-height:16px;
+}
+.nav-item.active .nav-count{color:var(--accent); border-color:transparent; background:transparent}
+.nav-sub{padding-left:14px}
+.nav-sub .nav-item{font-size:12.5px; padding:5px 10px}
+.dot{width:8px;height:8px;border-radius:50%;flex:none}
+.side-footer{flex:none; border-top:1px solid var(--border-soft); padding:10px 12px; display:flex; gap:8px}
+.side-footer button{flex:1}
+
+/* ---- Área principal ---- */
+#main{display:flex; flex-direction:column; min-width:0; height:100vh}
+#header{
+  height:var(--header-h); flex:none; display:flex; align-items:center; gap:12px;
+  padding:0 18px; background:var(--panel); border-bottom:1px solid var(--border-soft);
+}
+#breadcrumb{display:flex; align-items:center; gap:6px; font-size:12.5px; color:var(--text-3); flex:1; min-width:0; overflow:hidden}
+#breadcrumb .crumb{white-space:nowrap; color:var(--text-3)}
+#breadcrumb .crumb.link{color:var(--text-2); cursor:pointer}
+#breadcrumb .crumb.link:hover{color:var(--accent)}
+#breadcrumb .crumb.current{color:var(--text); font-weight:600}
+#breadcrumb .sep{color:var(--text-3)}
+.header-actions{display:flex; align-items:center; gap:8px}
+
+.btn{
+  display:inline-flex; align-items:center; gap:7px; padding:7px 13px;
+  border-radius:var(--radius-sm); border:1px solid var(--border); background:var(--panel);
+  color:var(--text-2); font-size:12.5px; font-weight:500; transition:all var(--transition); white-space:nowrap;
+}
+.btn:hover{border-color:var(--accent); color:var(--text)}
+.btn.primary{background:var(--accent); border-color:var(--accent); color:var(--accent-text); font-weight:600}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn.icon-only{padding:7px 8px}
+.btn.ghost{border-color:transparent; background:transparent}
+.btn.ghost:hover{background:var(--panel-2)}
+.btn.sm{padding:4px 9px; font-size:11.5px}
+.btn.danger{color:var(--red)}
+.btn.danger:hover{border-color:var(--red)}
+
+#content{flex:1; overflow-y:auto; padding:22px 24px 60px; scroll-behavior:smooth}
+.view-header{margin-bottom:18px; display:flex; align-items:flex-end; gap:14px; flex-wrap:wrap}
+.view-header h2{font-family:var(--font-display); font-size:23px; font-weight:700; letter-spacing:.2px}
+.view-header .sub{color:var(--text-2); font-size:12.5px; margin-top:2px}
+.view-header .spacer{flex:1}
+
+/* ============================================================
+   DASHBOARD
+   ============================================================ */
+.cards{display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:14px; margin-bottom:20px}
+.stat-card{
+  background:var(--panel); border:1px solid var(--border-soft); border-radius:var(--radius);
+  padding:16px 18px; cursor:pointer; transition:all var(--transition); position:relative; overflow:hidden;
+}
+.stat-card:hover{transform:translateY(-2px); box-shadow:var(--shadow-sm); border-color:var(--border)}
+.stat-card .k{font-size:11px; text-transform:uppercase; letter-spacing:.8px; color:var(--text-3); display:flex; align-items:center; gap:7px}
+.stat-card .v{font-family:var(--font-display); font-size:30px; font-weight:700; margin-top:6px; line-height:1.1}
+.stat-card .d{font-size:11.5px; color:var(--text-2); margin-top:5px}
+.stat-card::after{content:""; position:absolute; left:0; top:0; bottom:0; width:3px; background:var(--card-accent, var(--accent)); opacity:.9}
+
+.grid-2{display:grid; grid-template-columns:1fr 1fr; gap:14px}
+.grid-3{display:grid; grid-template-columns:repeat(3,1fr); gap:14px}
+@media (max-width:1100px){ .grid-2,.grid-3{grid-template-columns:1fr} }
+.panel{
+  background:var(--panel); border:1px solid var(--border-soft); border-radius:var(--radius);
+  padding:16px 18px; margin-bottom:14px;
+}
+.panel h3{font-size:13px; font-weight:600; margin-bottom:12px; display:flex; align-items:center; gap:8px}
+.panel h3 .icon{color:var(--accent)}
+.chart-legend{display:flex; flex-wrap:wrap; gap:10px; margin-top:12px; font-size:11.5px; color:var(--text-2)}
+.chart-legend .li{display:flex; align-items:center; gap:6px}
+
+/* barras svg */
+.hbar-row{display:grid; grid-template-columns:130px 1fr 42px; gap:10px; align-items:center; margin-bottom:9px; font-size:12px}
+.hbar-row .lbl{color:var(--text-2); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; text-align:right; cursor:pointer}
+.hbar-row .lbl:hover{color:var(--accent)}
+.hbar-track{height:9px; background:var(--panel-3); border-radius:6px; overflow:hidden}
+.hbar-fill{height:100%; border-radius:6px; transition:width .6s cubic-bezier(.4,0,.2,1)}
+.hbar-row .num{font-family:var(--font-mono); font-size:11.5px; color:var(--text-2)}
+
+/* listas do dashboard */
+.mini-list{display:flex; flex-direction:column; gap:2px}
+.mini-item{
+  display:flex; align-items:center; gap:10px; padding:8px 10px; border-radius:var(--radius-sm);
+  cursor:pointer; transition:background var(--transition);
+}
+.mini-item:hover{background:var(--panel-2)}
+.mini-item .t{flex:1; min-width:0}
+.mini-item .t .a{font-size:12.5px; font-weight:500; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.mini-item .t .b{font-size:11.5px; color:var(--text-3); white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.mini-item .when{font-family:var(--font-mono); font-size:11px; color:var(--text-2); flex:none}
+
+/* ============================================================
+   BADGES / CHIPS
+   ============================================================ */
+.badge{
+  display:inline-flex; align-items:center; gap:5px; padding:2px 9px; border-radius:20px;
+  font-size:11px; font-weight:600; letter-spacing:.2px; white-space:nowrap;
+  background:var(--badge-bg, var(--panel-3)); color:var(--badge-fg, var(--text-2));
+  border:1px solid color-mix(in srgb, var(--badge-fg, var(--text-3)) 25%, transparent);
+}
+.chips{display:flex; gap:7px; flex-wrap:wrap}
+.chip{
+  padding:4px 12px; border-radius:20px; border:1px solid var(--border); background:var(--panel);
+  font-size:11.5px; color:var(--text-2); transition:all var(--transition);
+}
+.chip:hover{border-color:var(--accent); color:var(--text)}
+.chip.on{background:var(--accent-soft); border-color:var(--accent); color:var(--accent); font-weight:600}
+
+/* ============================================================
+   TABELAS
+   ============================================================ */
+.table-shell{background:var(--panel); border:1px solid var(--border-soft); border-radius:var(--radius); overflow:hidden}
+.table-toolbar{display:flex; align-items:center; gap:10px; padding:10px 14px; border-bottom:1px solid var(--border-soft); flex-wrap:wrap}
+.table-toolbar .search-wrap{position:relative; flex:1; min-width:180px; max-width:340px}
+.table-toolbar input[type=search]{
+  width:100%; background:var(--bg-soft); border:1px solid var(--border); border-radius:var(--radius-sm);
+  padding:7px 10px 7px 30px; font-size:12.5px; outline:none;
+}
+.table-toolbar input[type=search]:focus{border-color:var(--accent)}
+.table-toolbar .search-wrap .icon{position:absolute; left:8px; top:7px; color:var(--text-3)}
+.table-toolbar .spacer{flex:1}
+.table-viewport{overflow:auto; max-height:calc(100vh - 300px); min-height:120px}
+table.data{border-collapse:separate; border-spacing:0; width:100%; font-size:12.5px}
+table.data th{
+  position:sticky; top:0; z-index:2; background:var(--panel-2); color:var(--text-2);
+  text-align:left; font-size:11px; text-transform:uppercase; letter-spacing:.6px; font-weight:600;
+  padding:9px 12px; border-bottom:1px solid var(--border); white-space:nowrap; user-select:none; cursor:pointer;
+  overflow:hidden; text-overflow:ellipsis; position:sticky;
+}
+table.data th .th-in{display:flex; align-items:center; gap:5px}
+table.data th .sort-ind{color:var(--accent); font-size:10px}
+table.data th .col-resizer{
+  position:absolute; right:0; top:0; bottom:0; width:6px; cursor:col-resize;
+}
+table.data th .col-resizer:hover{background:var(--accent-soft)}
+table.data td{
+  padding:9px 12px; border-bottom:1px solid var(--border-soft); color:var(--text);
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:340px; vertical-align:middle;
+}
+table.data tbody tr{cursor:pointer; transition:background .12s}
+table.data tbody tr:hover{background:var(--panel-2)}
+table.data tbody tr.selected{background:var(--accent-soft)}
+table.data td .sub{display:block; font-size:11px; color:var(--text-3)}
+.table-foot{display:flex; align-items:center; gap:10px; padding:9px 14px; border-top:1px solid var(--border-soft); font-size:12px; color:var(--text-2); flex-wrap:wrap}
+.table-foot .spacer{flex:1}
+.pager{display:flex; gap:4px; align-items:center}
+.pager button{
+  min-width:28px; height:28px; border-radius:var(--radius-sm); border:1px solid var(--border);
+  background:var(--panel); color:var(--text-2); font-size:12px;
+}
+.pager button:disabled{opacity:.4; cursor:default}
+.pager button.on{background:var(--accent); border-color:var(--accent); color:var(--accent-text); font-weight:700}
+select.sel{
+  background:var(--bg-soft); border:1px solid var(--border); border-radius:var(--radius-sm);
+  padding:6px 8px; font-size:12px; color:var(--text); outline:none;
+}
+
+/* dropdown de colunas / menus */
+.menu{
+  position:fixed; z-index:300; min-width:200px; background:var(--panel); border:1px solid var(--border);
+  border-radius:var(--radius-sm); box-shadow:var(--shadow); padding:6px; display:none; max-height:340px; overflow:auto;
+}
+.menu.open{display:block; animation:pop .14s ease}
+@keyframes pop{from{opacity:0; transform:scale(.97) translateY(-3px)}to{opacity:1; transform:none}}
+.menu .mi{
+  display:flex; align-items:center; gap:9px; width:100%; padding:7px 10px;
+  background:none; border:none; border-radius:5px; color:var(--text); font-size:12.5px; text-align:left;
+}
+.menu .mi:hover{background:var(--panel-2)}
+.menu .mi.danger{color:var(--red)}
+.menu .sep{height:1px; background:var(--border-soft); margin:5px 4px}
+.menu label.mi{cursor:pointer}
+.menu input[type=checkbox]{accent-color:var(--accent)}
+
+/* ============================================================
+   INSPECTOR (painel lateral direito)
+   ============================================================ */
+#inspector{
+  position:fixed; top:0; right:0; bottom:0; width:var(--inspector-w); max-width:94vw;
+  background:var(--panel); border-left:1px solid var(--border); box-shadow:var(--shadow);
+  transform:translateX(105%); transition:transform .24s cubic-bezier(.4,0,.2,1);
+  z-index:200; display:flex; flex-direction:column;
+}
+#inspector.open{transform:translateX(0)}
+.insp-head{flex:none; padding:14px 16px 12px; border-bottom:1px solid var(--border-soft)}
+.insp-head .row1{display:flex; align-items:flex-start; gap:10px}
+.insp-head .row1 h3{font-family:var(--font-display); font-size:16.5px; line-height:1.3; flex:1; word-break:break-word}
+.insp-head .meta{margin-top:7px; display:flex; gap:7px; flex-wrap:wrap; align-items:center}
+.insp-body{flex:1; overflow-y:auto; padding:14px 16px 40px}
+.insp-sec{margin-bottom:18px}
+.insp-sec > h4{
+  font-size:10.5px; text-transform:uppercase; letter-spacing:.9px; color:var(--text-3);
+  margin-bottom:9px; display:flex; align-items:center; gap:7px;
+}
+.insp-sec > h4 .line{flex:1; height:1px; background:var(--border-soft)}
+.kv{display:grid; grid-template-columns:132px 1fr; gap:4px 12px; font-size:12.5px}
+.kv .k{color:var(--text-3); padding:3px 0; word-break:break-word}
+.kv .v{color:var(--text); padding:3px 0; word-break:break-word; min-width:0}
+.kv .v .link-rec{color:var(--blue); cursor:pointer}
+.kv .v .link-rec:hover{text-decoration:underline}
+.tree{font-size:12.5px}
+.tree details{margin:2px 0 2px 0}
+.tree details > summary{
+  cursor:pointer; color:var(--text-2); list-style:none; display:flex; gap:6px; align-items:center;
+  padding:3px 6px; border-radius:5px;
+}
+.tree details > summary:hover{background:var(--panel-2)}
+.tree details > summary::before{content:"▸"; font-size:10px; color:var(--text-3); transition:transform var(--transition)}
+.tree details[open] > summary::before{transform:rotate(90deg)}
+.tree .tree-in{margin-left:16px; border-left:1px solid var(--border-soft); padding-left:10px}
+.tree .leaf{display:flex; gap:8px; padding:2px 6px; border-radius:5px}
+.tree .leaf:hover{background:var(--panel-2)}
+.tree .leaf .lk{color:var(--text-3); flex:none; max-width:46%; word-break:break-word}
+.tree .leaf .lv{color:var(--text); word-break:break-word; min-width:0}
+.tree .type-num{color:var(--blue); font-family:var(--font-mono); font-size:12px}
+.tree .type-bool{color:var(--purple); font-family:var(--font-mono); font-size:12px}
+.tree .type-null{color:var(--text-3); font-style:italic}
+.rel-card{
+  border:1px solid var(--border-soft); border-radius:var(--radius-sm); padding:9px 11px; margin-bottom:7px;
+  cursor:pointer; transition:all var(--transition); background:var(--bg-soft);
+}
+.rel-card:hover{border-color:var(--accent); transform:translateX(2px)}
+.rel-card .a{font-size:12.5px; font-weight:600; display:flex; align-items:center; gap:8px; justify-content:space-between}
+.rel-card .b{font-size:11.5px; color:var(--text-2); margin-top:2px}
+
+/* ============================================================
+   MODAL / TOAST / OVERLAYS
+   ============================================================ */
+#modalWrap{position:fixed; inset:0; z-index:400; display:none; align-items:center; justify-content:center; background:rgba(5,8,12,.55); backdrop-filter:blur(3px)}
+#modalWrap.open{display:flex; animation:fade .15s ease}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+#modal{
+  width:min(860px, 92vw); max-height:86vh; background:var(--panel); border:1px solid var(--border);
+  border-radius:14px; box-shadow:var(--shadow); display:flex; flex-direction:column; animation:pop .18s ease;
+}
+#modal .m-head{padding:16px 20px; border-bottom:1px solid var(--border-soft); display:flex; align-items:center; gap:12px}
+#modal .m-head h3{font-family:var(--font-display); font-size:18px; flex:1}
+#modal .m-body{overflow-y:auto; padding:18px 20px}
+#toasts{position:fixed; bottom:20px; right:20px; z-index:500; display:flex; flex-direction:column; gap:9px}
+.toast{
+  background:var(--panel); border:1px solid var(--border); border-left:3px solid var(--accent);
+  border-radius:var(--radius-sm); padding:11px 16px; box-shadow:var(--shadow); font-size:12.5px;
+  display:flex; align-items:center; gap:10px; min-width:240px; max-width:360px;
+  animation:slideIn .22s cubic-bezier(.4,0,.2,1);
+}
+.toast.ok{border-left-color:var(--green)} .toast.err{border-left-color:var(--red)} .toast.info{border-left-color:var(--blue)}
+@keyframes slideIn{from{opacity:0; transform:translateX(24px)}to{opacity:1; transform:none}}
+.toast.out{animation:slideOut .2s ease forwards}
+@keyframes slideOut{to{opacity:0; transform:translateX(24px)}}
+
+#dropOverlay{
+  position:fixed; inset:0; z-index:600; display:none; align-items:center; justify-content:center;
+  background:color-mix(in srgb, var(--bg) 82%, transparent); backdrop-filter:blur(3px);
+}
+#dropOverlay.on{display:flex}
+#dropOverlay .box{
+  border:2px dashed var(--accent); border-radius:16px; padding:50px 70px; text-align:center;
+  color:var(--accent); font-size:16px; font-family:var(--font-display);
+}
+#loading{
+  position:fixed; inset:0; z-index:700; display:none; align-items:center; justify-content:center;
+  background:color-mix(in srgb, var(--bg) 75%, transparent);
+}
+#loading.on{display:flex}
+.spinner{width:38px;height:38px;border-radius:50%;border:3px solid var(--border);border-top-color:var(--accent);animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* estado vazio */
+.empty{
+  text-align:center; padding:52px 20px; color:var(--text-2);
+}
+.empty .icon{margin-bottom:14px; color:var(--text-3)}
+.empty h3{font-family:var(--font-display); font-size:17px; color:var(--text); margin-bottom:6px}
+.empty p{font-size:12.5px; max-width:400px; margin:0 auto 16px}
+
+/* tooltip */
+#tooltip{
+  position:fixed; z-index:800; background:var(--panel-3); border:1px solid var(--border);
+  border-radius:6px; padding:5px 10px; font-size:11.5px; color:var(--text); pointer-events:none;
+  box-shadow:var(--shadow-sm); display:none; max-width:300px;
+}
+
+/* busca global (resultados) */
+.gs-group{margin-bottom:20px}
+.gs-group h3{font-size:12px; text-transform:uppercase; letter-spacing:.8px; color:var(--text-3); margin-bottom:8px; display:flex; gap:8px; align-items:center}
+.gs-hit{
+  background:var(--panel); border:1px solid var(--border-soft); border-radius:var(--radius-sm);
+  padding:11px 14px; margin-bottom:8px; cursor:pointer; transition:all var(--transition);
+}
+.gs-hit:hover{border-color:var(--accent); transform:translateX(3px)}
+.gs-hit .a{font-weight:600; font-size:13px}
+.gs-hit .b{font-size:12px; color:var(--text-2); margin-top:3px; overflow:hidden; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical}
+.gs-hit .path{font-size:10.5px; font-family:var(--font-mono); color:var(--text-3); margin-top:4px}
+
+.demo-banner{
+  background:var(--accent-soft); border:1px solid color-mix(in srgb, var(--accent) 40%, transparent);
+  color:var(--accent); border-radius:var(--radius-sm); padding:9px 14px; font-size:12.5px;
+  display:flex; align-items:center; gap:10px; margin-bottom:16px;
+}
+.demo-banner .spacer{flex:1}
+
+@media (max-width:860px){
+  #app{grid-template-columns:0 1fr}
+  #sidebar{position:fixed; left:0; top:0; bottom:0; width:var(--sidebar-w); z-index:150; transform:translateX(-100%); transition:transform .22s ease}
+  #app.sidebar-open #sidebar{transform:none; box-shadow:var(--shadow)}
+  .kv{grid-template-columns:110px 1fr}
+}
+@media (prefers-reduced-motion: reduce){
+  *{animation:none!important; transition:none!important; scroll-behavior:auto!important}
+}
+:focus-visible{outline:2px solid var(--accent); outline-offset:1px}
+</style>
+</head>
+<body>
+<div id="login-screen">
+  <div class="box">
+    <div class="brandrow"><div class="mark">§</div><h1>Acervo Jurídico</h1></div>
+    <div class="sub">Acesso restrito — Daniel Dias</div>
+    <form id="login-form">
+      <div class="fg"><label>E-mail</label><input type="email" id="login-email" required autocomplete="username"></div>
+      <div class="fg"><label>Senha</label><input type="password" id="login-password" required autocomplete="current-password"></div>
+      <div class="err" id="login-error"></div>
+      <button type="submit" class="btn primary" id="login-submit">Entrar</button>
+    </form>
+  </div>
+</div>
+<div id="app">
+
+  <!-- ================= SIDEBAR ================= -->
+  <aside id="sidebar">
+    <div class="brand">
+      <div class="brand-mark">§</div>
+      <div>
+        <h1>Acervo Jurídico</h1>
+        <small>Daniel Dias</small>
+      </div>
+    </div>
+    <div class="side-search">
+      <div class="search-wrap">
+        <span class="icon" data-icon="search"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg></span>
+        <input id="globalSearch" type="text" placeholder="Pesquisar em tudo…" autocomplete="off">
+        <kbd>/</kbd>
+      </div>
+    </div>
+    <nav id="sideNav"><div class="nav-section"><div class="nav-body">
+        
+      <button class="nav-item active" data-nav="dashboard">
+        <span class="icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 11 9-8 9 8v9a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"></path></svg></span><span class="lbl">Dashboard</span>
+        </button>
+        
+      <button class="nav-item " data-nav="favoritos">
+        <span class="icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 3 2.7 5.6 6.1.8-4.5 4.3 1.1 6-5.4-2.9L6.6 20l1.1-6L3.2 9.4l6.1-.8z"></path></svg></span><span class="lbl">Favoritos</span>
+        <span class="nav-count">0</span></button>
+       </div></div>
+      <div class="nav-section " data-sec="colecoes">
+        <button class="nav-title"><span class="chev"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg></span>Coleções</button>
+        <div class="nav-body">
+      <button class="nav-item " data-nav="clientes">
+        <span class="icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3.5"></circle><path d="M2.5 20c.8-3.4 3.4-5 6.5-5s5.7 1.6 6.5 5M16 4.6a3.5 3.5 0 0 1 0 6.8M17.5 15.2c2.1.6 3.5 2.1 4 4.8"></path></svg></span><span class="lbl">Clientes</span>
+        <span class="nav-count">1</span></button>
+      <button class="nav-item " data-nav="processos">
+        <span class="icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v18M8 21h8M6 6l6-2 6 2M6 6l-3 7a3.5 3.5 0 0 0 6 0zM18 6l-3 7a3.5 3.5 0 0 0 6 0z"></path></svg></span><span class="lbl">Processos</span>
+        <span class="nav-count">1</span></button>
+      <button class="nav-item " data-nav="audiencias">
+        <span class="icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m13 7 4 4M9 11l4 4m-8.5 5.5L11 14M14 4l6 6-3 3-6-6zM3 21h9"></path></svg></span><span class="lbl">Audiências</span>
+        <span class="nav-count">1</span></button>
+      <button class="nav-item " data-nav="prazos">
+        <span class="icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3.5 2"></path></svg></span><span class="lbl">Prazos</span>
+        <span class="nav-count">2</span></button></div></div>
+      <div class="nav-section " data-sec="categorias">
+        <button class="nav-title"><span class="chev"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg></span>Categorias</button>
+        <div class="nav-body"><div class="nav-sub"><div style="padding:3px 10px;font-size:10.5px;color:var(--text-3)">Processos por status</div><button class="nav-item " data-nav="processos" data-fkey="status" data-fval="Em andamento">
+           <span class="dot" style="background:var(--blue)"></span><span class="lbl">Em andamento</span>
+           <span class="nav-count">1</span></button><div style="padding:8px 10px 3px;font-size:10.5px;color:var(--text-3)">Prazos por prioridade</div><button class="nav-item " data-nav="prazos" data-fkey="prioridade" data-fval="Não informado">
+           <span class="dot" style="background:var(--blue)"></span><span class="lbl">Não informado</span>
+           <span class="nav-count">2</span></button></div></div></div></nav>
+    <div class="side-footer" style="flex-direction:column;align-items:stretch;gap:6px">
+      <div style="display:flex;gap:8px">
+        <button class="btn sm" id="btnLoadJson" data-tip="Importar um JSON pra dentro do banco de dados (mescla com o que já existe)"><span data-icon="upload"></span> Importar JSON</button>
+        <button class="btn sm icon-only" id="btnTheme" data-tip="Alternar tema"><span data-icon="moon"></span></button>
+      </div>
+      <button class="btn sm ghost" id="btnLogout" style="justify-content:flex-start;color:var(--text-3)"><span data-icon="x"></span> Sair</button>
+    </div>
+  </aside>
+
+  <!-- ================= MAIN ================= -->
+  <div id="main">
+    <header id="header">
+      <button class="btn ghost icon-only" id="btnSidebar" data-tip="Alternar menu"><span data-icon="menu"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"></path></svg></span></button>
+      <div id="breadcrumb"><span class="crumb link" data-go="dashboard"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 11 9-8 9 8v9a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"></path></svg></span><span class="sep">/</span><span class="crumb current">Dashboard</span></div>
+      <div class="header-actions">
+        <button class="btn sm" id="btnExport" data-tip="Baixar o JSON carregado"><span data-icon="download"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v12m0 0 4-4m-4 4-4-4M4 20h16"></path></svg></span> Exportar</button>
+      </div>
+    </header>
+    <div id="content">
+      
+      <div class="view-header"><div><h2>Visão geral do acervo</h2>
+        <div class="sub">Panorama de clientes, processos, prazos e audiências do escritório.</div></div></div>
+      <div class="cards">
+      <div class="stat-card" data-nav="clientes" style="--card-accent:var(--blue)">
+        <div class="k"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3.5"></circle><path d="M2.5 20c.8-3.4 3.4-5 6.5-5s5.7 1.6 6.5 5M16 4.6a3.5 3.5 0 0 1 0 6.8M17.5 15.2c2.1.6 3.5 2.1 4 4.8"></path></svg> Clientes</div>
+        <div class="v">1</div>
+        <div class="d">registros no acervo</div>
+      </div>
+      <div class="stat-card" data-nav="processos" style="--card-accent:var(--accent)">
+        <div class="k"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v18M8 21h8M6 6l6-2 6 2M6 6l-3 7a3.5 3.5 0 0 0 6 0zM18 6l-3 7a3.5 3.5 0 0 0 6 0z"></path></svg> Processos</div>
+        <div class="v">1</div>
+        <div class="d">registros no acervo</div>
+      </div>
+      <div class="stat-card" data-nav="audiencias" style="--card-accent:var(--orange)">
+        <div class="k"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m13 7 4 4M9 11l4 4m-8.5 5.5L11 14M14 4l6 6-3 3-6-6zM3 21h9"></path></svg> Audiências</div>
+        <div class="v">1</div>
+        <div class="d">registros no acervo</div>
+      </div>
+      <div class="stat-card" data-nav="prazos" style="--card-accent:var(--purple)">
+        <div class="k"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3.5 2"></path></svg> Prazos</div>
+        <div class="v">2</div>
+        <div class="d">registros no acervo</div>
+      </div>
+      <div class="stat-card" style="--card-accent:var(--text-3)">
+        <div class="k"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 3 9 5-9 5-9-5zM3 13l9 5 9-5M3 17l9 5 9-5"></path></svg> Total geral</div>
+        <div class="v">5</div>
+        <div class="d">em 4 coleções</div>
+      </div></div><div class="grid-2">
+        <div class="panel"><h3><span class="icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v18M8 21h8M6 6l6-2 6 2M6 6l-3 7a3.5 3.5 0 0 0 6 0zM18 6l-3 7a3.5 3.5 0 0 0 6 0z"></path></svg></span>Processos por status</h3>
+          <div data-barnav="processos|status">
+      <div class="hbar-row">
+        <span class="lbl" data-bar="Em andamento" data-tip="Em andamento: 1">Em andamento</span>
+        <div class="hbar-track"><div class="hbar-fill" style="width:100.0%;background:var(--blue)"></div></div>
+        <span class="num">1</span>
+      </div></div></div>
+        <div class="panel"><h3><span class="icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V10m6 10V4m6 16v-7m4 7H2"></path></svg></span>Processos por fase</h3><div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">
+      <svg width="150" height="150" role="img"><circle cx="75" cy="75" r="67" fill="none" stroke="var(--blue)" stroke-width="14" stroke-dasharray="420.97341558103227 420.97341558103227" stroke-dashoffset="0" transform="rotate(-90 75 75)" style="transition:stroke-dasharray .6s"></circle>
+        <text x="75" y="72" text-anchor="middle" fill="var(--text)" font-size="22" font-weight="700" font-family="var(--font-display)">1</text>
+        <text x="75" y="90" text-anchor="middle" fill="var(--text-3)" font-size="9.5" letter-spacing="1">TOTAL</text></svg>
+      <div class="chart-legend" style="flex-direction:column;align-items:flex-start;gap:7px"><span class="li"><span class="dot" style="background:var(--blue)"></span>Aguardando Sentença <b>1</b></span></div></div></div>
+      </div><div class="grid-2"><div class="panel"><h3><span class="icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3.5 2"></path></svg></span>Prazos por prioridade</h3>
+        <div data-barnav="prazos|prioridade">
+      <div class="hbar-row">
+        <span class="lbl" data-bar="Não informado" data-tip="Não informado: 2">Não informado</span>
+        <div class="hbar-track"><div class="hbar-fill" style="width:100.0%;background:var(--blue)"></div></div>
+        <span class="num">2</span>
+      </div></div></div><div class="panel"><h3><span class="icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3.5"></circle><path d="M2.5 20c.8-3.4 3.4-5 6.5-5s5.7 1.6 6.5 5M16 4.6a3.5 3.5 0 0 1 0 6.8M17.5 15.2c2.1.6 3.5 2.1 4 4.8"></path></svg></span>Clientes — pessoa física × jurídica</h3>
+        <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">
+      <svg width="150" height="150" role="img"><circle cx="75" cy="75" r="67" fill="none" stroke="var(--blue)" stroke-width="14" stroke-dasharray="420.97341558103227 420.97341558103227" stroke-dashoffset="0" transform="rotate(-90 75 75)" style="transition:stroke-dasharray .6s"></circle><circle cx="75" cy="75" r="67" fill="none" stroke="var(--accent)" stroke-width="14" stroke-dasharray="0 420.97341558103227" stroke-dashoffset="-420.97341558103227" transform="rotate(-90 75 75)" style="transition:stroke-dasharray .6s"></circle>
+        <text x="75" y="72" text-anchor="middle" fill="var(--text)" font-size="22" font-weight="700" font-family="var(--font-display)">1</text>
+        <text x="75" y="90" text-anchor="middle" fill="var(--text-3)" font-size="9.5" letter-spacing="1">TOTAL</text></svg>
+      <div class="chart-legend" style="flex-direction:column;align-items:flex-start;gap:7px"><span class="li"><span class="dot" style="background:var(--blue)"></span>Pessoa física <b>1</b></span><span class="li"><span class="dot" style="background:var(--accent)"></span>Pessoa jurídica <b>0</b></span></div></div></div></div><div class="grid-2"><div class="panel"><h3><span class="icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M3 9h18M8 3v4m8-4v4"></path></svg></span>Próximos — Prazos</h3><div class="mini-list"><div class="mini-item" data-openrec="prazos|PRZ-001">
+          <span class="icon" style="color:var(--text-3)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3.5 2"></path></svg></span>
+          <div class="t"><div class="a">Despachar processo com a juíza (lembrete interno)</div>
+          <div class="b">0808460-14.2026.8.18.0176</div></div>
+          <div style="text-align:right"><div class="when">22 jul</div><span class="badge" style="--badge-fg:var(--red);--badge-bg:var(--red-soft)">vencido há 5d</span></div></div><div class="mini-item" data-openrec="prazos|PRZ-002">
+          <span class="icon" style="color:var(--text-3)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3.5 2"></path></svg></span>
+          <div class="t"><div class="a">Entrar em contato com a parte requerida por e-mail</div>
+          <div class="b">0808460-14.2026.8.18.0176</div></div>
+          <div style="text-align:right"><div class="when">29 jul</div><span class="badge" style="--badge-fg:var(--orange);--badge-bg:var(--orange-soft)">em 2d</span></div></div></div></div></div><div class="panel"><h3><span class="icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v5m0-8v.5"></path></svg></span>Estatísticas gerais</h3>
+      <div style="display:flex;gap:26px;flex-wrap:wrap;font-size:12.5px;color:var(--text-2)">
+        <span>Valor somado das causas: <b style="color:var(--text)">R$&nbsp;6.484.000,00</b></span>
+        <span>Prazos possivelmente vencidos: <b style="color:var(--red)">1</b></span>
+        <span>Fonte dos dados: <b style="color:var(--text)">seed_data_atualizado.json</b></span>
+        <span>Relacionamentos mapeados: <b style="color:var(--text)">3</b></span>
+      </div></div></div>
+  </div>
+</div>
+
+<!-- ================= INSPECTOR ================= -->
+<aside id="inspector" aria-label="Detalhes do registro">
+  <div class="insp-head">
+    <div class="row1">
+      <h3 id="inspTitle"></h3>
+      <button class="btn ghost icon-only" id="inspExpand" data-tip="Abrir em modal"><span data-icon="expand"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3H3v5m13-5h5v5M8 21H3v-5m18 0v5h-5"></path></svg></span></button>
+      <button class="btn ghost icon-only" id="inspClose" data-tip="Fechar (Esc)"><span data-icon="x"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"></path></svg></span></button>
+    </div>
+    <div class="meta" id="inspMeta"></div>
+  </div>
+  <div class="insp-body" id="inspBody"></div>
+</aside>
+
+<!-- ================= MODAL ================= -->
+<div id="modalWrap">
+  <div id="modal" role="dialog" aria-modal="true">
+    <div class="m-head">
+      <h3 id="modalTitle"></h3>
+      <button class="btn ghost icon-only" id="modalClose"><span data-icon="x"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"></path></svg></span></button>
+    </div>
+    <div class="m-body" id="modalBody"></div>
+  </div>
+</div>
+
+<div id="toasts"></div>
+<div id="dropOverlay"><div class="box"><div style="font-size:34px;margin-bottom:8px">§</div>Solte o arquivo JSON para carregar o acervo</div></div>
+<div id="loading" class=""><div class="spinner"></div></div>
+<div id="tooltip" style="display: none;"></div>
+<div class="menu" id="ctxMenu"></div>
+<div class="menu" id="colMenu"></div>
+<input type="file" id="fileInput" accept=".json,application/json" hidden="">
+
+<script>
+"use strict";
+/* ══════════════════════════════════════════════════════════════
+   MÓDULO: SUPABASE (banco de dados na nuvem + login)
+   ══════════════════════════════════════════════════════════════ */
+const SUPABASE_URL = "https://tlvlcwiagizsgmxksorx.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_QiwiMhS1ZoGuqAI3QepLpw_HhOndet_";
+let sb = null;
+let SUPABASE_CONFIGURED = false;
+try{
+  sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  SUPABASE_CONFIGURED = true;
+} catch(e){ SUPABASE_CONFIGURED = false; }
+
+function showLogin(){ document.getElementById("login-screen").style.display = "flex"; }
+function hideLogin(){ document.getElementById("login-screen").style.display = "none"; }
+
+function showConfigPending(){
+  document.querySelector("#login-screen .box").innerHTML = `
+    <div class="brandrow"><div class="mark">§</div><h1>Configuração pendente</h1></div>
+    <p style="font-size:12.5px;color:var(--text-2);line-height:1.7">
+      Este arquivo ainda não tem as credenciais do Supabase preenchidas.<br><br>
+      Abra o arquivo <code>.html</code> num editor de texto e substitua
+      <code>SUPABASE_URL</code> e <code>SUPABASE_ANON_KEY</code> (logo no início do &lt;script&gt;)
+      pelos valores do seu projeto (Project Settings → API, no painel do Supabase).
+    </p>`;
+  showLogin();
+}
+
+async function boot(){
+  if (!SUPABASE_CONFIGURED){ showConfigPending(); return; }
+  try{
+    const { data: { session } } = await sb.auth.getSession();
+    if (session){ hideLogin(); App.init(); }
+    else showLogin();
+  } catch(e){ showConfigPending(); }
+}
+
+document.getElementById("login-form").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  if (!SUPABASE_CONFIGURED) return;
+  const email = document.getElementById("login-email").value.trim();
+  const password = document.getElementById("login-password").value;
+  const err = document.getElementById("login-error");
+  const btn = document.getElementById("login-submit");
+  err.textContent = ""; btn.disabled = true; btn.textContent = "Entrando...";
+  const { error } = await sb.auth.signInWithPassword({ email, password });
+  btn.disabled = false; btn.textContent = "Entrar";
+  if (error){ err.textContent = "E-mail ou senha inválidos."; return; }
+  hideLogin();
+  App.init();
+});
+
+async function doLogout(){
+  await sb.auth.signOut();
+  location.reload();
+}
+
+async function fetchAllFromSupabase(){
+  const tables = ["clientes","processos","audiencias","prazos","honorarios"];
+  const results = await Promise.all(tables.map(t => sb.from(t).select("*")));
+  const json = {};
+  results.forEach((r, i) => {
+    if (r.error) throw r.error;
+    json[tables[i]] = r.data || [];
+  });
+  return json;
+}
+async function refreshFromSupabase(){
+  const json = await fetchAllFromSupabase();
+  Store.load(json, "Banco de dados (Supabase)", false);
+}
+
+document.addEventListener("DOMContentLoaded", boot);
+
+/* ══════════════════════════════════════════════════════════════
+   MÓDULO: UTILITÁRIOS
+   ══════════════════════════════════════════════════════════════ */
+const U = (() => {
+  const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+  const debounce = (fn, ms=180) => { let t; return (...a)=>{clearTimeout(t); t=setTimeout(()=>fn(...a),ms)}; };
+  const norm = s => String(s ?? "").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase();
+
+  const MONTHS = ["jan","fev","mar","abr","mai","jun","jul","ago","set","out","nov","dez"];
+  function parseDate(v){
+    if (v == null || v === "") return null;
+    if (v instanceof Date) return isNaN(v) ? null : v;
+    if (typeof v === "number") { const d = new Date(v); return isNaN(d) ? null : d; }
+    const s = String(v).trim();
+    let m = s.match(/^(\d{4})-(\d{2})-(\d{2})(?:[T ](\d{2}):(\d{2}))?/);           // ISO
+    if (m) return new Date(+m[1], +m[2]-1, +m[3], +(m[4]||0), +(m[5]||0));
+    m = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})(?:[ T](\d{1,2}):(\d{2}))?/);       // dd/mm/aaaa
+    if (m) return new Date(+m[3], +m[2]-1, +m[1], +(m[4]||0), +(m[5]||0));
+    return null;
+  }
+  const pad = n => String(n).padStart(2,"0");
+  function fmtDate(v, withTime=false){
+    const d = parseDate(v);
+    if (!d) return v == null ? "" : String(v);
+    const base = `${pad(d.getDate())}/${pad(d.getMonth()+1)}/${d.getFullYear()}`;
+    const hasTime = d.getHours() || d.getMinutes();
+    return (withTime || hasTime) && (d.getHours()+d.getMinutes()>0)
+      ? `${base} ${pad(d.getHours())}:${pad(d.getMinutes())}` : base;
+  }
+  function fmtDateShort(v){
+    const d = parseDate(v); if(!d) return String(v ?? "");
+    return `${pad(d.getDate())} ${MONTHS[d.getMonth()]}`;
+  }
+  function daysUntil(v){
+    const d = parseDate(v); if(!d) return null;
+    const today = new Date(); today.setHours(0,0,0,0);
+    const dd = new Date(d); dd.setHours(0,0,0,0);
+    return Math.round((dd - today) / 86400000);
+  }
+  function fmtMoney(v){
+    let n = v;
+    if (typeof v === "string"){
+      const clean = v.replace(/[R$\s.]/g,"").replace(",",".");
+      n = parseFloat(clean);
+      if (isNaN(n)) return v;
+    }
+    if (typeof n !== "number" || isNaN(n)) return String(v ?? "");
+    return n.toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
+  }
+  const looksLikeDateKey  = k => /data|date|prazo(?!s)|venc|distribui|audiencia$|inicio|fim|criad|atualizad|movimenta/i.test(k);
+  const looksLikeMoneyKey = k => /valor|honorario|custas|preco|montante/i.test(k);
+  const isPlainObj = v => v !== null && typeof v === "object" && !Array.isArray(v);
+
+  // Rótulo humano: "codCliente" → "Cod Cliente", "ultimaMovimentacao" → "Ultima Movimentacao"
+  function humanize(k){
+    return String(k)
+      .replace(/[_-]+/g," ")
+      .replace(/([a-z\d])([A-Z])/g,"$1 $2")
+      .replace(/\b\w/g, c => c.toUpperCase())
+      .trim();
+  }
+  function highlight(text, q){
+    const t = esc(text);
+    if (!q) return t;
+    const nq = norm(q);
+    const nt = norm(text);
+    let out = "", last = 0, idx = nt.indexOf(nq);
+    if (idx < 0) return t;
+    // realce sobre o texto original preservando acentuação
+    while (idx >= 0){
+      out += esc(String(text).slice(last, idx)) + "<mark>" + esc(String(text).slice(idx, idx+q.length)) + "</mark>";
+      last = idx + q.length;
+      idx = nt.indexOf(nq, last);
+    }
+    return out + esc(String(text).slice(last));
+  }
+  function download(name, content, type="application/json"){
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(new Blob([content],{type}));
+    a.download = name; a.click();
+    setTimeout(()=>URL.revokeObjectURL(a.href), 800);
+  }
+  // localStorage seguro (funciona mesmo em ambientes sem storage)
+  const mem = {};
+  const store = {
+    get(k, d){ try{ const v = localStorage.getItem(k); return v == null ? (k in mem ? mem[k] : d) : JSON.parse(v);}catch{ return k in mem ? mem[k] : d; } },
+    set(k, v){ mem[k]=v; try{ localStorage.setItem(k, JSON.stringify(v)); }catch{} }
+  };
+  return { esc, debounce, norm, parseDate, fmtDate, fmtDateShort, daysUntil, fmtMoney,
+           looksLikeDateKey, looksLikeMoneyKey, isPlainObj, humanize, highlight, download, store };
+})();
+
+/* ══════════════════════════════════════════════════════════════
+   MÓDULO: ÍCONES SVG (sem dependências)
+   ══════════════════════════════════════════════════════════════ */
+const Icons = (() => {
+  const P = {
+    search:'<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>',
+    menu:'<path d="M4 7h16M4 12h16M4 17h16"/>',
+    moon:'<path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"/>',
+    sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M2 12h2m16 0h2M4.9 19.1l1.4-1.4m11.4-11.4 1.4-1.4"/>',
+    upload:'<path d="M12 16V4m0 0 4 4m-4-4-4 4M4 20h16"/>',
+    download:'<path d="M12 4v12m0 0 4-4m-4 4-4-4M4 20h16"/>',
+    x:'<path d="m6 6 12 12M18 6 6 18"/>',
+    expand:'<path d="M8 3H3v5m13-5h5v5M8 21H3v-5m18 0v5h-5"/>',
+    home:'<path d="m3 11 9-8 9 8v9a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"/>',
+    users:'<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.8-3.4 3.4-5 6.5-5s5.7 1.6 6.5 5M16 4.6a3.5 3.5 0 0 1 0 6.8M17.5 15.2c2.1.6 3.5 2.1 4 4.8"/>',
+    scale:'<path d="M12 3v18M8 21h8M6 6l6-2 6 2M6 6l-3 7a3.5 3.5 0 0 0 6 0zM18 6l-3 7a3.5 3.5 0 0 0 6 0z"/>',
+    clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/>',
+    gavel:'<path d="m13 7 4 4M9 11l4 4m-8.5 5.5L11 14M14 4l6 6-3 3-6-6zM3 21h9"/>',
+    star:'<path d="m12 3 2.7 5.6 6.1.8-4.5 4.3 1.1 6-5.4-2.9L6.6 20l1.1-6L3.2 9.4l6.1-.8z"/>',
+    starFill:'<path fill="currentColor" d="m12 3 2.7 5.6 6.1.8-4.5 4.3 1.1 6-5.4-2.9L6.6 20l1.1-6L3.2 9.4l6.1-.8z"/>',
+    chart:'<path d="M4 20V10m6 10V4m6 16v-7m4 7H2"/>',
+    chevron:'<path d="m9 6 6 6-6 6"/>',
+    chevDown:'<path d="m6 9 6 6 6-6"/>',
+    columns:'<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M9 4v16M15 4v16"/>',
+    filter:'<path d="M4 5h16l-6 7v6l-4 2v-8z"/>',
+    copy:'<rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/>',
+    eye:'<path d="M2 12s3.5-6.5 10-6.5S22 12 22 12s-3.5 6.5-10 6.5S2 12 2 12z"/><circle cx="12" cy="12" r="2.6"/>',
+    doc:'<path d="M6 2h8l5 5v13a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z"/><path d="M14 2v5h5M9 12h6M9 16h6"/>',
+    pin:'<path d="M12 21s-6.5-5.4-6.5-10A6.5 6.5 0 0 1 18.5 11c0 4.6-6.5 10-6.5 10z"/><circle cx="12" cy="11" r="2.2"/>',
+    calendar:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 9h18M8 3v4m8-4v4"/>',
+    alert:'<path d="M12 3 2.5 20h19zM12 9.5v4.5m0 3v.5"/>',
+    info:'<circle cx="12" cy="12" r="9"/><path d="M12 11v5m0-8v.5"/>',
+    link:'<path d="M10 14a4.5 4.5 0 0 0 6.4.4l3-3a4.5 4.5 0 0 0-6.4-6.4l-1.6 1.6M14 10a4.5 4.5 0 0 0-6.4-.4l-3 3a4.5 4.5 0 0 0 6.4 6.4l1.6-1.6"/>',
+    layers:'<path d="m12 3 9 5-9 5-9-5zM3 13l9 5 9-5M3 17l9 5 9-5"/>',
+    plus:'<path d="M12 5v14M5 12h14"/>',
+    edit:'<path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/>',
+    trash:'<path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0-1 14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2L4 6"/>'
+  };
+  const svg = (name, size=16) =>
+    `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${P[name]||P.info}</svg>`;
+  function hydrate(root=document){
+    root.querySelectorAll("[data-icon]").forEach(el => {
+      el.innerHTML = svg(el.dataset.icon, el.dataset.size || 16);
+    });
+  }
+  return { svg, hydrate };
+})();
+
+/* ══════════════════════════════════════════════════════════════
+   MÓDULO: TOASTS
+   ══════════════════════════════════════════════════════════════ */
+const Toast = (() => {
+  const wrap = () => document.getElementById("toasts");
+  function show(msg, kind="info", ms=3200){
+    const el = document.createElement("div");
+    el.className = `toast ${kind}`;
+    const ic = kind === "ok" ? "info" : kind === "err" ? "alert" : "info";
+    el.innerHTML = Icons.svg(ic) + `<span>${U.esc(msg)}</span>`;
+    wrap().appendChild(el);
+    setTimeout(()=>{ el.classList.add("out"); setTimeout(()=>el.remove(), 220); }, ms);
+  }
+  return { show };
+})();
+
+/* ══════════════════════════════════════════════════════════════
+   MÓDULO: STORE — dados, esquema dinâmico e relacionamentos
+   ══════════════════════════════════════════════════════════════ */
+const Store = (() => {
+  const state = {
+    raw: null,              // JSON original
+    collections: {},        // nome → array de registros
+    meta: {},               // nome → { keys, idKey, labelKey }
+    index: {},              // nome → Map(id → registro)
+    relations: [],          // { from, fromKey, to, toKey }
+    searchIndex: [],        // { entity, id, text }
+    isDemo: false,
+    sourceName: "—"
+  };
+
+  const ENTITY_LABELS = { clientes:"Clientes", processos:"Processos", prazos:"Prazos", audiencias:"Audiências" };
+  const ENTITY_ICONS  = { clientes:"users", processos:"scale", prazos:"clock", audiencias:"gavel" };
+  const SINGULAR      = { clientes:"cliente", processos:"processo", prazos:"prazo", audiencias:"audiencia" };
+
+  const keyOf = (obj, ...names) => {
+    const map = {}; Object.keys(obj || {}).forEach(k => map[U.norm(k)] = k);
+    for (const n of names){ if (map[U.norm(n)]) return map[U.norm(n)]; }
+    return null;
+  };
+  const get = (obj, ...names) => { const k = keyOf(obj, ...names); return k ? obj[k] : undefined; };
+
+  // ---------- descoberta de coleções (totalmente dinâmica) ----------
+  function findCollections(json){
+    const out = {};
+    function walk(node, path){
+      if (Array.isArray(node)){
+        if (node.length && node.every(U.isPlainObj)){
+          const name = path[path.length-1] || "registros";
+          const finalName = out[name] ? path.join(".") : name;
+          out[finalName] = node;
+        }
+        return;
+      }
+      if (U.isPlainObj(node)){
+        for (const [k, v] of Object.entries(node)) walk(v, [...path, k]);
+      }
+    }
+    walk(json, []);
+    return out;
+  }
+
+  // ---------- esquema por coleção ----------
+  function buildMeta(name, arr){
+    const keys = [];
+    const seen = new Set();
+    for (const rec of arr){
+      for (const k of Object.keys(rec)){
+        if (!seen.has(k)){ seen.add(k); keys.push(k); }
+      }
+    }
+    const sample = arr[0] || {};
+    const idKey = keyOf(sample, "codigo","id","cod","uuid","identificador") || keys[0];
+    const labelKey =
+      keyOf(sample, "nome","razaoSocial","descricao","titulo","numero","numeroProcesso","tipo","assunto")
+      || keys.find(k => typeof sample[k] === "string") || idKey;
+    return { keys, idKey, labelKey };
+  }
+
+  // ---------- relacionamentos (explícitos + inferidos) ----------
+  function buildRelations(){
+    state.relations = [];
+    const colNames = Object.keys(state.collections);
+    const bySingular = {};
+    for (const n of colNames){
+      const sing = SINGULAR[U.norm(n)] || (U.norm(n).endsWith("s") ? U.norm(n).slice(0,-1) : U.norm(n));
+      bySingular[U.norm(sing)] = n;
+      bySingular[U.norm(n)] = n;
+    }
+    for (const from of colNames){
+      const meta = state.meta[from];
+      for (const k of meta.keys){
+        const m = String(k).match(/^cod(?:igo)?[_-]?(.+)$/i) || String(k).match(/^id[_-]?(.{2,})$/i);
+        if (!m) continue;
+        const targetName = bySingular[U.norm(m[1])] || bySingular[U.norm(m[1]) + "s"];
+        if (targetName && targetName !== from){
+          state.relations.push({ from, fromKey:k, to:targetName, toKey: state.meta[targetName].idKey });
+        }
+      }
+    }
+  }
+
+  function relationsFrom(entity){ return state.relations.filter(r => r.from === entity); }
+  function relationsTo(entity){ return state.relations.filter(r => r.to === entity); }
+
+  // resolve o registro pai (ex.: cliente de um processo)
+  function resolveParent(entity, rec, rel){
+    const idx = state.index[rel.to];
+    return idx ? idx.get(String(rec[rel.fromKey])) : null;
+  }
+  // filhos: todos os registros que apontam para este (ex.: prazos de um processo)
+  function children(entity, rec){
+    const out = {};
+    const id = String(rec[state.meta[entity].idKey]);
+    for (const rel of relationsTo(entity)){
+      const list = (state.collections[rel.from] || []).filter(r => String(r[rel.fromKey]) === id);
+      if (list.length) out[rel.from] = (out[rel.from] || []).concat(list);
+    }
+    return out;
+  }
+  // filhos transitivos: prazos/audiências de um cliente via processos
+  function deepChildren(entity, rec){
+    const direct = children(entity, rec);
+    const out = { ...direct };
+    for (const [childEntity, list] of Object.entries(direct)){
+      for (const childRec of list){
+        const sub = children(childEntity, childRec);
+        for (const [gName, gList] of Object.entries(sub)){
+          out[gName] = (out[gName] || []).concat(gList.filter(g => !(out[gName]||[]).includes(g)));
+        }
+      }
+    }
+    return out;
+  }
+
+  function label(entity, rec){
+    if (!rec) return "—";
+    const meta = state.meta[entity] || {};
+    const v = rec[meta.labelKey];
+    if (v != null && v !== "") return String(v);
+    const alt = get(rec,"nome","descricao","numero","titulo","tipo");
+    return alt != null ? String(alt) : String(rec[meta.idKey] ?? "—");
+  }
+
+  function entityTitle(name){
+    return ENTITY_LABELS[U.norm(name)] || U.humanize(name);
+  }
+  function entityIcon(name){ return ENTITY_ICONS[U.norm(name)] || "layers"; }
+
+  // ---------- índice de busca (todos os campos, recursivo) ----------
+  function flatten(v, acc){
+    if (v == null) return;
+    if (Array.isArray(v)) return v.forEach(x => flatten(x, acc));
+    if (U.isPlainObj(v)) return Object.values(v).forEach(x => flatten(x, acc));
+    acc.push(String(v));
+  }
+  function buildSearchIndex(){
+    state.searchIndex = [];
+    for (const [name, arr] of Object.entries(state.collections)){
+      const idKey = state.meta[name].idKey;
+      arr.forEach((rec, i) => {
+        const acc = []; flatten(rec, acc);
+        state.searchIndex.push({
+          entity: name, id: String(rec[idKey] ?? i), rec,
+          text: acc.join(" • "), ntext: U.norm(acc.join(" "))
+        });
+      });
+    }
+  }
+
+  function load(json, sourceName, isDemo=false){
+    state.raw = json;
+    state.sourceName = sourceName;
+    state.isDemo = isDemo;
+    state.collections = findCollections(json);
+    if (!Object.keys(state.collections).length) throw new Error("Nenhuma coleção de registros foi encontrada no JSON.");
+    state.meta = {}; state.index = {};
+    for (const [name, arr] of Object.entries(state.collections)){
+      state.meta[name] = buildMeta(name, arr);
+      const idx = new Map();
+      arr.forEach((rec,i) => idx.set(String(rec[state.meta[name].idKey] ?? i), rec));
+      state.index[name] = idx;
+    }
+    buildRelations();
+    buildSearchIndex();
+  }
+
+  return { state, load, get, keyOf, relationsFrom, relationsTo, resolveParent, children,
+           deepChildren, label, entityTitle, entityIcon };
+})();
+
+/* ══════════════════════════════════════════════════════════════
+   MÓDULO: SEMÂNTICA JURÍDICA (cores, prioridades, formatação)
+   ══════════════════════════════════════════════════════════════ */
+const Legal = (() => {
+  const STATUS_COLORS = [
+    [/ativo|andamento|em curso|tramita/i, "blue"],
+    [/urgente|atras|vencid|critic/i, "red"],
+    [/suspens|aguard|pendente|parado/i, "orange"],
+    [/arquiv|encerr|conclu|finaliz|baixad|transitad|extint/i, "green"],
+    [/acordo|senten/i, "purple"]
+  ];
+  const PRI_COLORS = [
+    [/urgent|critic|altissim|maxim/i, "red"],
+    [/alta|alto/i, "orange"],
+    [/medi|normal/i, "blue"],
+    [/baixa|baixo/i, "green"]
+  ];
+  function pick(table, v){
+    const s = String(v ?? "");
+    for (const [re, c] of table) if (re.test(s)) return c;
+    return null;
+  }
+  const statusColor = v => pick(STATUS_COLORS, v) || "blue";
+  const priColor = v => pick(PRI_COLORS, v) || "blue";
+
+  // cor definida nos próprios dados (ex.: objeto urgencia.cor)
+  function customColor(rec){
+    const urg = Store.get(rec || {}, "urgencia","urgência");
+    if (U.isPlainObj(urg)){
+      const c = Store.get(urg, "cor","color","hex");
+      if (typeof c === "string" && c.trim()) return c.trim();
+    }
+    if (typeof urg === "string" && /^#|^rgb/i.test(urg)) return urg;
+    const cor = Store.get(rec || {}, "cor","color");
+    if (typeof cor === "string" && /^#|^rgb/i.test(cor)) return cor;
+    return null;
+  }
+  function badge(text, colorVar, customHex){
+    if (!text && text !== 0) return "";
+    if (customHex){
+      return `<span class="badge" style="--badge-fg:${U.esc(customHex)};--badge-bg:color-mix(in srgb, ${U.esc(customHex)} 16%, transparent)">${U.esc(text)}</span>`;
+    }
+    return `<span class="badge" style="--badge-fg:var(--${colorVar});--badge-bg:var(--${colorVar}-soft)">${U.esc(text)}</span>`;
+  }
+  function deadlineBadge(days){
+    if (days == null) return "";
+    if (days < 0)  return badge(`vencido há ${Math.abs(days)}d`, "red");
+    if (days === 0) return badge("vence hoje", "red");
+    if (days <= 3) return badge(`em ${days}d`, "orange");
+    if (days <= 10) return badge(`em ${days}d`, "blue");
+    return badge(`em ${days}d`, "green");
+  }
+  const isPJ = rec => {
+    const t = String(Store.get(rec,"tipo","tipoPessoa","pessoa") ?? "");
+    if (/pj|jur[ií]dica/i.test(t)) return true;
+    if (/pf|f[ií]sica/i.test(t)) return false;
+    const doc = String(Store.get(rec,"cnpj","cpfCnpj","documento","cpf") ?? "").replace(/\D/g,"");
+    return doc.length === 14;
+  };
+  return { statusColor, priColor, customColor, badge, deadlineBadge, isPJ };
+})();
+
+/* ══════════════════════════════════════════════════════════════
+   MÓDULO: RENDERIZAÇÃO DE VALORES (recursiva, nada é perdido)
+   ══════════════════════════════════════════════════════════════ */
+const Render = (() => {
+  function scalar(v, key=""){
+    if (v == null || v === "") return `<span class="type-null">—</span>`;
+    if (typeof v === "boolean") return `<span class="type-bool">${v ? "sim" : "não"}</span>`;
+    if (typeof v === "number"){
+      if (U.looksLikeMoneyKey(key)) return U.esc(U.fmtMoney(v));
+      return `<span class="type-num">${U.esc(v.toLocaleString("pt-BR"))}</span>`;
+    }
+    const s = String(v);
+    if (/^https?:\/\//i.test(s)) return `<a href="${U.esc(s)}" target="_blank" rel="noopener">${U.esc(s)}</a> ${Icons.svg("link",11)}`;
+    if (U.looksLikeDateKey(key) && U.parseDate(s)) return U.esc(U.fmtDate(s));
+    if (U.looksLikeMoneyKey(key)) return U.esc(U.fmtMoney(s));
+    return U.esc(s);
+  }
+
+  // Árvore recursiva para objetos/arrays — nunca esconde propriedades
+  function tree(v, key="", depth=0){
+    if (Array.isArray(v)){
+      if (!v.length) return `<span class="type-null">lista vazia</span>`;
+      const items = v.map((item,i) => {
+        if (U.isPlainObj(item) || Array.isArray(item)){
+          return `<details ${depth<1?"open":""}><summary>Item ${i+1}${U.isPlainObj(item)&&(item.descricao||item.nome||item.tipo)? " — " + U.esc(String(item.descricao||item.nome||item.tipo)).slice(0,60):""}</summary><div class="tree-in">${tree(item,"",depth+1)}</div></details>`;
+        }
+        return `<div class="leaf"><span class="lv">${scalar(item)}</span></div>`;
+      }).join("");
+      return items;
+    }
+    if (U.isPlainObj(v)){
+      return Object.entries(v).map(([k, val]) => {
+        if (U.isPlainObj(val) || Array.isArray(val)){
+          const count = Array.isArray(val) ? ` (${val.length})` : "";
+          return `<details ${depth<1?"open":""}><summary>${U.esc(U.humanize(k))}${count}</summary><div class="tree-in">${tree(val,k,depth+1)}</div></details>`;
+        }
+        return `<div class="leaf"><span class="lk">${U.esc(U.humanize(k))}</span><span class="lv">${scalar(val,k)}</span></div>`;
+      }).join("");
+    }
+    return `<div class="leaf"><span class="lv">${scalar(v,key)}</span></div>`;
+  }
+
+  // Valor de célula de tabela (resumido, mas fiel)
+  function cell(v, key=""){
+    if (Array.isArray(v)) return `<span class="badge">${v.length} ${v.length===1?"item":"itens"}</span>`;
+    if (U.isPlainObj(v)){
+      const lbl = Store.get(v,"nome","descricao","titulo","nivel","tipo");
+      return lbl != null ? U.esc(String(lbl)) : `<span class="badge">objeto</span>`;
+    }
+    return scalar(v, key);
+  }
+  return { scalar, tree, cell };
+})();
+
+/* ══════════════════════════════════════════════════════════════
+   MÓDULO: FAVORITOS
+   ══════════════════════════════════════════════════════════════ */
+const Fav = (() => {
+  let set = new Set(U.store.get("acervo.favs", []));
+  const key = (e,id) => `${e}::${id}`;
+  const idOf = (e,rec) => String(rec[Store.state.meta[e].idKey]);
+  return {
+    has:(e,rec)=> set.has(key(e, idOf(e,rec))),
+    toggle(e,rec){
+      const k = key(e, idOf(e,rec));
+      set.has(k) ? set.delete(k) : set.add(k);
+      U.store.set("acervo.favs", [...set]);
+      return set.has(k);
+    },
+    list(){
+      const out = [];
+      for (const k of set){
+        const [e,id] = k.split("::");
+        const rec = Store.state.index[e]?.get(id);
+        if (rec) out.push({entity:e, rec});
+      }
+      return out;
+    },
+    count(){ return set.size; }
+  };
+})();
+
+/* ══════════════════════════════════════════════════════════════
+   MÓDULO: TOOLTIP / MENUS / MODAL
+   ══════════════════════════════════════════════════════════════ */
+const UI = (() => {
+  const tooltip = () => document.getElementById("tooltip");
+  document.addEventListener("mouseover", e => {
+    const t = e.target.closest("[data-tip]");
+    if (!t) { tooltip().style.display = "none"; return; }
+    const tip = tooltip();
+    tip.textContent = t.dataset.tip;
+    tip.style.display = "block";
+    const r = t.getBoundingClientRect();
+    tip.style.left = Math.min(r.left, innerWidth - 260) + "px";
+    tip.style.top = (r.bottom + 7) + "px";
+  });
+
+  function openMenuAt(menuEl, x, y, html){
+    menuEl.innerHTML = html;
+    menuEl.classList.add("open");
+    Icons.hydrate(menuEl);
+    const r = menuEl.getBoundingClientRect();
+    menuEl.style.left = Math.min(x, innerWidth - r.width - 10) + "px";
+    menuEl.style.top  = Math.min(y, innerHeight - r.height - 10) + "px";
+  }
+  function closeMenus(){
+    document.querySelectorAll(".menu.open").forEach(m => m.classList.remove("open"));
+  }
+  document.addEventListener("click", e => { if (!e.target.closest(".menu")) closeMenus(); });
+  window.addEventListener("blur", closeMenus);
+
+  const modalWrap = () => document.getElementById("modalWrap");
+  function openModal(title, bodyHtml){
+    document.getElementById("modalTitle").textContent = title;
+    document.getElementById("modalBody").innerHTML = bodyHtml;
+    Icons.hydrate(document.getElementById("modalBody"));
+    modalWrap().classList.add("open");
+  }
+  function closeModal(){ modalWrap().classList.remove("open"); }
+  document.getElementById("modalClose").addEventListener("click", closeModal);
+  modalWrap().addEventListener("click", e => { if (e.target === modalWrap()) closeModal(); });
+
+  function loading(on){ document.getElementById("loading").classList.toggle("on", !!on); }
+
+  return { openMenuAt, closeMenus, openModal, closeModal, loading };
+})();
+
+/* ══════════════════════════════════════════════════════════════
+   MÓDULO: INSPECTOR — painel lateral de detalhes
+   ══════════════════════════════════════════════════════════════ */
+const Inspector = (() => {
+  let current = null; // {entity, rec}
+  const el = () => document.getElementById("inspector");
+
+  function headerBadges(entity, rec){
+    const parts = [];
+    parts.push(`<span class="badge" style="--badge-fg:var(--accent);--badge-bg:var(--accent-soft)">${Icons.svg(Store.entityIcon(entity),11)} ${U.esc(Store.entityTitle(entity).replace(/s$/,""))}</span>`);
+    const st = Store.get(rec,"status","situacao");
+    if (st != null && !U.isPlainObj(st)) parts.push(Legal.badge(st, Legal.statusColor(st)));
+    const pri = Store.get(rec,"prioridade");
+    if (pri != null && !U.isPlainObj(pri)) parts.push(Legal.badge(pri, Legal.priColor(pri), Legal.customColor(rec)));
+    const fase = Store.get(rec,"fase");
+    if (fase != null && !U.isPlainObj(fase)) parts.push(Legal.badge(fase, "purple"));
+    const dk = Store.state.meta[entity].keys.find(k => U.looksLikeDateKey(k) && U.parseDate(rec[k]));
+    if (U.norm(entity).startsWith("prazo") && dk) parts.push(Legal.deadlineBadge(U.daysUntil(rec[dk])));
+    return parts.join("");
+  }
+
+  function fieldRows(entity, rec){
+    const rels = Store.relationsFrom(entity);
+    const relByKey = {}; rels.forEach(r => relByKey[r.fromKey] = r);
+    let simple = "", complex = "";
+    for (const k of Store.state.meta[entity].keys){
+      if (!(k in rec)) continue;
+      const v = rec[k];
+      if (relByKey[k]){
+        const rel = relByKey[k];
+        const parent = Store.resolveParent(entity, rec, rel);
+        const lbl = parent ? Store.label(rel.to, parent) : `código ${v} (não encontrado)`;
+        simple += `<div class="k">${U.esc(U.humanize(k))}</div>
+                   <div class="v"><span class="link-rec" data-open="${U.esc(rel.to)}|${U.esc(String(v))}">${U.esc(lbl)}</span></div>`;
+        continue;
+      }
+      if (U.isPlainObj(v) || Array.isArray(v)){
+        const count = Array.isArray(v) ? ` (${v.length})` : "";
+        complex += `<details open><summary>${U.esc(U.humanize(k))}${count}</summary><div class="tree-in">${Render.tree(v,k,1)}</div></details>`;
+      } else {
+        simple += `<div class="k">${U.esc(U.humanize(k))}</div><div class="v">${Render.scalar(v,k)}</div>`;
+      }
+    }
+    let html = `<div class="insp-sec"><h4>${Icons.svg("doc",12)} Dados do registro <span class="line"></span></h4><div class="kv">${simple}</div></div>`;
+    if (complex) html += `<div class="insp-sec"><h4>${Icons.svg("layers",12)} Estruturas internas <span class="line"></span></h4><div class="tree">${complex}</div></div>`;
+    return html;
+  }
+
+  function relatedSections(entity, rec){
+    let html = "";
+    // pais já aparecem como link nos campos; aqui listamos filhos (diretos + transitivos)
+    const kids = Store.deepChildren(entity, rec);
+    for (const [childEntity, list] of Object.entries(kids)){
+      const idKey = Store.state.meta[childEntity].idKey;
+      const cards = list.map(r => {
+        const dk = Store.state.meta[childEntity].keys.find(k => U.looksLikeDateKey(k) && U.parseDate(r[k]));
+        const when = dk ? U.fmtDate(r[dk], true) : "";
+        const st = Store.get(r,"status","situacao","prioridade");
+        const stBadge = (st != null && !U.isPlainObj(st)) ? Legal.badge(st, Legal.statusColor(st) , Legal.customColor(r)) : "";
+        return `<div class="rel-card" data-open="${U.esc(childEntity)}|${U.esc(String(r[idKey]))}">
+                  <div class="a"><span>${U.esc(Store.label(childEntity, r))}</span>${stBadge}</div>
+                  <div class="b">${when ? Icons.svg("calendar",11)+" "+U.esc(when) : ""}</div>
+                </div>`;
+      }).join("");
+      html += `<div class="insp-sec">
+        <h4>${Icons.svg(Store.entityIcon(childEntity),12)} ${U.esc(Store.entityTitle(childEntity))} relacionados
+        <span class="badge">${list.length}</span><span class="line"></span></h4>${cards}</div>`;
+    }
+    // estatísticas rápidas do registro
+    const kidsCount = Object.entries(kids).map(([n,l]) => `${l.length} ${Store.entityTitle(n).toLowerCase()}`).join(" · ");
+    if (kidsCount){
+      html = `<div class="insp-sec"><h4>${Icons.svg("chart",12)} Estatísticas <span class="line"></span></h4>
+              <div style="font-size:12.5px;color:var(--text-2)">${U.esc(kidsCount)} vinculados a este registro.</div></div>` + html;
+    }
+    return html;
+  }
+
+  function open(entity, rec){
+    current = { entity, rec };
+    const idKey = Store.state.meta[entity].idKey;
+    const editable = typeof FIELD_DEFS !== "undefined" && FIELD_DEFS[entity];
+    document.getElementById("inspTitle").textContent = Store.label(entity, rec);
+    document.getElementById("inspMeta").innerHTML =
+      headerBadges(entity, rec) +
+      `<button class="btn sm ghost" id="inspFav">${Icons.svg(Fav.has(entity,rec)?"starFill":"star",13)} ${Fav.has(entity,rec)?"Favorito":"Favoritar"}</button>` +
+      (editable ? `<button class="btn sm ghost" id="inspEdit">${Icons.svg("edit",13)} Editar</button>
+                   <button class="btn sm ghost" id="inspDelete" style="color:var(--red)">${Icons.svg("trash",13)} Excluir</button>` : "");
+    let movHtml = "";
+    if (entity === "processos"){
+      movHtml = `<div class="insp-sec"><h4>${Icons.svg("plus",12)} Nova movimentação <span class="line"></span></h4>
+        <form id="movForm" class="form-grid2" style="display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end;margin-bottom:6px">
+          <div class="fg" style="flex:0 0 130px"><label>Data</label><input type="date" name="data" required></div>
+          <div class="fg" style="flex:0 0 100px"><label>Hora</label><input type="time" name="hora"></div>
+          <div class="fg" style="flex:1;min-width:160px"><label>Descrição</label><input type="text" name="descricao" required></div>
+          <button type="submit" class="btn sm primary">Adicionar</button>
+        </form></div>`;
+    }
+    document.getElementById("inspBody").innerHTML = movHtml + fieldRows(entity, rec) + relatedSections(entity, rec);
+    el().classList.add("open");
+    document.getElementById("inspFav").onclick = () => {
+      const on = Fav.toggle(entity, rec);
+      Toast.show(on ? "Adicionado aos favoritos." : "Removido dos favoritos.", "ok");
+      open(entity, rec); Sidebar.render(); App.refreshIfView("favoritos");
+    };
+    if (editable){
+      document.getElementById("inspEdit").onclick = () => CRUD.openForm(entity, rec[idKey]);
+      document.getElementById("inspDelete").onclick = () => CRUD.remove(entity, rec[idKey]);
+    }
+    const movForm = document.getElementById("movForm");
+    if (movForm) movForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const fd = Object.fromEntries(new FormData(e.target).entries());
+      await CRUD.addMovimentacao(rec[idKey], fd.data, fd.hora, fd.descricao);
+    });
+  }
+  function close(){ el().classList.remove("open"); current = null; }
+
+  document.getElementById("inspClose").addEventListener("click", close);
+  document.getElementById("inspExpand").addEventListener("click", () => {
+    if (!current) return;
+    UI.openModal(Store.label(current.entity, current.rec),
+      `<div class="tree">${Render.tree(current.rec)}</div>`);
+  });
+  // navegação por links internos do inspector
+  document.getElementById("inspector").addEventListener("click", e => {
+    const t = e.target.closest("[data-open]");
+    if (!t) return;
+    const [ent, id] = t.dataset.open.split("|");
+    const rec = Store.state.index[ent]?.get(id);
+    if (rec) open(ent, rec); else Toast.show("Registro relacionado não encontrado.", "err");
+  });
+
+  return { open, close, get current(){ return current; } };
+})();
+
+/* ══════════════════════════════════════════════════════════════
+   MÓDULO: TABELA GENÉRICA
+   sort · filtro · paginação · pesquisa · colunas ocultáveis
+   e redimensionáveis · renderização incremental
+   ══════════════════════════════════════════════════════════════ */
+class DataTable {
+  constructor(opts){
+    this.entity = opts.entity;
+    this.container = opts.container;
+    this.columns = opts.columns;           // [{key,label,render?,sortVal?}]
+    this.getData = opts.getData;           // () => array
+    this.filters = opts.filters || [];     // [{label, key, values:[...]}]
+    this.onRow = opts.onRow;
+    this.state = {
+      q:"", sortKey:null, sortDir:1, page:1, pageSize:25,
+      hidden:new Set(U.store.get(`acervo.cols.${this.entity}`, [])),
+      widths:U.store.get(`acervo.widths.${this.entity}`, {}),
+      activeFilters:{}
+    };
+    if (opts.initialFilter) this.state.activeFilters = { ...opts.initialFilter };
+  }
+  visibleColumns(){ return this.columns.filter(c => !this.state.hidden.has(c.key)); }
+
+  processed(){
+    let rows = this.getData();
+    const { q, activeFilters, sortKey, sortDir } = this.state;
+    for (const [k, val] of Object.entries(activeFilters)){
+      if (val == null || val === "") continue;
+      rows = rows.filter(r => {
+        const rv = Store.get(r, k);
+        const flat = U.isPlainObj(rv) ? Object.values(rv).join(" ") : String(rv ?? "");
+        return U.norm(flat) === U.norm(val) || U.norm(flat).includes(U.norm(val));
+      });
+    }
+    if (q){
+      const nq = U.norm(q);
+      rows = rows.filter(r => { const acc=[]; (function f(v){ if(v==null)return; if(Array.isArray(v))return v.forEach(f); if(U.isPlainObj(v))return Object.values(v).forEach(f); acc.push(String(v)); })(r); return U.norm(acc.join(" ")).includes(nq); });
+    }
+    if (sortKey){
+      const col = this.columns.find(c => c.key === sortKey);
+      rows = [...rows].sort((a,b) => {
+        let va = col?.sortVal ? col.sortVal(a) : a[sortKey];
+        let vb = col?.sortVal ? col.sortVal(b) : b[sortKey];
+        const da = U.parseDate(va), db = U.parseDate(vb);
+        if (da && db) return (da - db) * sortDir;
+        if (typeof va === "number" && typeof vb === "number") return (va - vb) * sortDir;
+        return U.norm(va).localeCompare(U.norm(vb), "pt-BR") * sortDir;
+      });
+    }
+    return rows;
+  }
+
+  render(){
+    const rows = this.processed();
+    const { page, pageSize, q } = this.state;
+    const totalPages = Math.max(1, Math.ceil(rows.length / pageSize));
+    if (this.state.page > totalPages) this.state.page = totalPages;
+    const slice = rows.slice((this.state.page-1)*pageSize, this.state.page*pageSize);
+    const cols = this.visibleColumns();
+    const idKey = Store.state.meta[this.entity].idKey;
+
+    const filterChips = this.filters.map(f => {
+      const cur = this.state.activeFilters[f.key];
+      const opts = f.values.map(v =>
+        `<option value="${U.esc(v)}" ${U.norm(v)===U.norm(cur||"")?"selected":""}>${U.esc(v)}</option>`).join("");
+      return `<select class="sel tbl-filter" data-key="${U.esc(f.key)}" data-tip="Filtrar por ${U.esc(f.label)}">
+                <option value="">${U.esc(f.label)}: todos</option>${opts}</select>`;
+    }).join("");
+
+    const head = cols.map(c => {
+      const w = this.state.widths[c.key];
+      const sortInd = this.state.sortKey === c.key ? `<span class="sort-ind">${this.state.sortDir>0?"▲":"▼"}</span>` : "";
+      return `<th data-key="${U.esc(c.key)}" style="${w?`width:${w}px;min-width:${w}px;max-width:${w}px;`:""}">
+                <span class="th-in">${U.esc(c.label)}${sortInd}</span><span class="col-resizer" data-key="${U.esc(c.key)}"></span></th>`;
+    }).join("");
+
+    const body = slice.length ? slice.map(r => {
+      const id = String(r[idKey]);
+      const tds = cols.map(c => {
+        const raw = c.render ? c.render(r, q) : null;
+        const html = raw != null ? raw
+          : (q ? U.highlight(String(this._cellText(r, c.key)), q) : Render.cell(r[c.key], c.key));
+        return `<td>${html}</td>`;
+      }).join("");
+      const sel = Inspector.current && Inspector.current.entity===this.entity &&
+                  String(Inspector.current.rec[idKey])===id ? "selected" : "";
+      return `<tr data-id="${U.esc(id)}" class="${sel}">${tds}</tr>`;
+    }).join("") :
+    `<tr><td colspan="${cols.length}"><div class="empty" style="padding:30px">
+       ${Icons.svg("search",30)}<h3>Nenhum registro encontrado</h3>
+       <p>Ajuste a pesquisa ou limpe os filtros para ver os registros novamente.</p>
+       <button class="btn sm tbl-clear">Limpar filtros</button></div></td></tr>`;
+
+    const start = rows.length ? (this.state.page-1)*pageSize+1 : 0;
+    const end = Math.min(rows.length, this.state.page*pageSize);
+    const pages = this._pagerButtons(totalPages);
+
+    this.container.innerHTML = `
+      <div class="table-shell">
+        <div class="table-toolbar">
+          <div class="search-wrap"><span class="icon">${Icons.svg("search",14)}</span>
+            <input type="search" class="tbl-q" placeholder="Pesquisar nesta lista…" value="${U.esc(this.state.q)}"></div>
+          ${filterChips}
+          <span class="spacer"></span>
+          <button class="btn sm tbl-cols">${Icons.svg("columns",13)} Colunas</button>
+        </div>
+        <div class="table-viewport"><table class="data"><thead><tr>${head}</tr></thead><tbody>${body}</tbody></table></div>
+        <div class="table-foot">
+          <span>Exibindo <b>${start}–${end}</b> de <b>${rows.length}</b> registros</span>
+          <span class="spacer"></span>
+          <select class="sel tbl-size" data-tip="Registros por página">
+            ${[25,50,100,200].map(n=>`<option ${n===pageSize?"selected":""}>${n}</option>`).join("")}
+          </select>
+          <div class="pager">${pages}</div>
+        </div>
+      </div>`;
+    this._bind();
+  }
+
+  _cellText(r, key){
+    const v = r[key];
+    if (Array.isArray(v)) return `${v.length} itens`;
+    if (U.isPlainObj(v)){ const l = Store.get(v,"nome","descricao","nivel","tipo"); return l != null ? String(l) : "objeto"; }
+    if (U.looksLikeDateKey(key) && U.parseDate(v)) return U.fmtDate(v);
+    if (U.looksLikeMoneyKey(key)) return U.fmtMoney(v);
+    return String(v ?? "—");
+  }
+
+  _pagerButtons(total){
+    const p = this.state.page;
+    const btn = (n, lbl=n, dis=false, on=false) =>
+      `<button data-page="${n}" ${dis?"disabled":""} class="${on?"on":""}">${lbl}</button>`;
+    let nums = [];
+    const range = new Set([1,2,total-1,total,p-1,p,p+1]);
+    let last = 0;
+    for (let i=1;i<=total;i++){
+      if (range.has(i)){ if (i-last>1) nums.push(`<span style="padding:0 3px;color:var(--text-3)">…</span>`); nums.push(btn(i,i,false,i===p)); last=i; }
+    }
+    return btn(p-1,"‹",p<=1) + nums.join("") + btn(p+1,"›",p>=total);
+  }
+
+  _bind(){
+    const c = this.container;
+    c.querySelector(".tbl-q").addEventListener("input", U.debounce(e => {
+      this.state.q = e.target.value; this.state.page = 1; this.render();
+      const inp = c.querySelector(".tbl-q"); inp.focus(); inp.setSelectionRange(inp.value.length, inp.value.length);
+    }, 200));
+    c.querySelectorAll(".tbl-filter").forEach(sel => sel.addEventListener("change", e => {
+      this.state.activeFilters[e.target.dataset.key] = e.target.value; this.state.page = 1; this.render();
+    }));
+    c.querySelector(".tbl-size").addEventListener("change", e => {
+      this.state.pageSize = +e.target.value; this.state.page = 1; this.render();
+    });
+    c.querySelectorAll(".pager button").forEach(b => b.addEventListener("click", () => {
+      this.state.page = +b.dataset.page; this.render();
+    }));
+    const clear = c.querySelector(".tbl-clear");
+    if (clear) clear.addEventListener("click", () => {
+      this.state.q=""; this.state.activeFilters={}; this.state.page=1; this.render();
+    });
+
+    // ordenação
+    c.querySelectorAll("th").forEach(th => th.addEventListener("click", e => {
+      if (e.target.closest(".col-resizer")) return;
+      const k = th.dataset.key;
+      if (this.state.sortKey === k) this.state.sortDir *= -1;
+      else { this.state.sortKey = k; this.state.sortDir = 1; }
+      this.render();
+    }));
+
+    // redimensionamento de colunas
+    c.querySelectorAll(".col-resizer").forEach(rz => {
+      rz.addEventListener("mousedown", e => {
+        e.preventDefault(); e.stopPropagation();
+        const key = rz.dataset.key;
+        const th = rz.closest("th");
+        const startX = e.clientX, startW = th.offsetWidth;
+        const move = ev => {
+          const w = Math.max(70, startW + ev.clientX - startX);
+          th.style.width = th.style.minWidth = th.style.maxWidth = w + "px";
+          this.state.widths[key] = w;
+        };
+        const up = () => {
+          document.removeEventListener("mousemove", move);
+          document.removeEventListener("mouseup", up);
+          U.store.set(`acervo.widths.${this.entity}`, this.state.widths);
+        };
+        document.addEventListener("mousemove", move);
+        document.addEventListener("mouseup", up);
+      });
+    });
+
+    // menu de colunas
+    c.querySelector(".tbl-cols").addEventListener("click", e => {
+      e.stopPropagation();
+      const html = this.columns.map(col => `
+        <label class="mi"><input type="checkbox" data-col="${U.esc(col.key)}" ${this.state.hidden.has(col.key)?"":"checked"}>
+        ${U.esc(col.label)}</label>`).join("") +
+        `<div class="sep"></div><button class="mi" data-colreset>${Icons.svg("eye",13)} Mostrar todas</button>`;
+      const menu = document.getElementById("colMenu");
+      UI.openMenuAt(menu, e.clientX, e.clientY, html);
+      menu.querySelectorAll("input[data-col]").forEach(cb => cb.addEventListener("change", () => {
+        cb.checked ? this.state.hidden.delete(cb.dataset.col) : this.state.hidden.add(cb.dataset.col);
+        if (this.visibleColumns().length === 0){ this.state.hidden.delete(cb.dataset.col); cb.checked = true; Toast.show("Mantenha pelo menos uma coluna visível.","info"); }
+        U.store.set(`acervo.cols.${this.entity}`, [...this.state.hidden]);
+        this.render();
+      }));
+      menu.querySelector("[data-colreset]").addEventListener("click", () => {
+        this.state.hidden.clear(); U.store.set(`acervo.cols.${this.entity}`, []); UI.closeMenus(); this.render();
+      });
+    });
+
+    // clique e menu de contexto nas linhas
+    c.querySelectorAll("tbody tr[data-id]").forEach(tr => {
+      const rec = () => Store.state.index[this.entity].get(tr.dataset.id);
+      tr.addEventListener("click", () => { const r = rec(); if (r){ Inspector.open(this.entity, r); this.render(); } });
+      tr.addEventListener("contextmenu", e => {
+        e.preventDefault();
+        const r = rec(); if (!r) return;
+        const fav = Fav.has(this.entity, r);
+        UI.openMenuAt(document.getElementById("ctxMenu"), e.clientX, e.clientY, `
+          <button class="mi" data-act="open">${Icons.svg("eye",13)} Abrir detalhes</button>
+          <button class="mi" data-act="modal">${Icons.svg("expand",13)} Abrir em modal</button>
+          <button class="mi" data-act="fav">${Icons.svg(fav?"starFill":"star",13)} ${fav?"Remover dos favoritos":"Adicionar aos favoritos"}</button>
+          <div class="sep"></div>
+          <button class="mi" data-act="copy">${Icons.svg("copy",13)} Copiar JSON do registro</button>`);
+        document.getElementById("ctxMenu").querySelectorAll("[data-act]").forEach(b => b.addEventListener("click", () => {
+          const act = b.dataset.act; UI.closeMenus();
+          if (act==="open"){ Inspector.open(this.entity, r); this.render(); }
+          if (act==="modal") UI.openModal(Store.label(this.entity,r), `<div class="tree">${Render.tree(r)}</div>`);
+          if (act==="fav"){ Fav.toggle(this.entity,r); Toast.show(Fav.has(this.entity,r)?"Adicionado aos favoritos.":"Removido dos favoritos.","ok"); Sidebar.render(); }
+          if (act==="copy"){
+            const txt = JSON.stringify(r,null,2);
+            (navigator.clipboard?.writeText(txt) || Promise.reject()).then(
+              ()=>Toast.show("JSON copiado para a área de transferência.","ok"),
+              ()=>{ UI.openModal("JSON do registro", `<pre style="font-family:var(--font-mono);font-size:12px;white-space:pre-wrap">${U.esc(txt)}</pre>`); });
+          }
+        }));
+      });
+    });
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════
+   MÓDULO: GRÁFICOS SVG (sem bibliotecas)
+   ══════════════════════════════════════════════════════════════ */
+const Charts = (() => {
+  const PALETTE = ["var(--blue)","var(--green)","var(--orange)","var(--purple)","var(--red)","var(--accent)"];
+
+  function donut(data, size=150){
+    const total = data.reduce((s,d)=>s+d.value,0) || 1;
+    const R = size/2 - 8, C = size/2, circ = 2*Math.PI*R;
+    let offset = 0;
+    const segs = data.map((d,i) => {
+      const frac = d.value/total;
+      const seg = `<circle cx="${C}" cy="${C}" r="${R}" fill="none"
+        stroke="${d.color || PALETTE[i%PALETTE.length]}" stroke-width="14"
+        stroke-dasharray="${frac*circ} ${circ}" stroke-dashoffset="${-offset*circ}"
+        transform="rotate(-90 ${C} ${C})" style="transition:stroke-dasharray .6s"/>`;
+      offset += frac;
+      return seg;
+    }).join("");
+    const legend = data.map((d,i) =>
+      `<span class="li"><span class="dot" style="background:${d.color || PALETTE[i%PALETTE.length]}"></span>${U.esc(d.label)} <b>${d.value}</b></span>`).join("");
+    return `<div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">
+      <svg width="${size}" height="${size}" role="img">${segs}
+        <text x="${C}" y="${C-3}" text-anchor="middle" fill="var(--text)" font-size="22" font-weight="700" font-family="var(--font-display)">${total===1&&!data.length?0:data.reduce((s,d)=>s+d.value,0)}</text>
+        <text x="${C}" y="${C+15}" text-anchor="middle" fill="var(--text-3)" font-size="9.5" letter-spacing="1">TOTAL</text></svg>
+      <div class="chart-legend" style="flex-direction:column;align-items:flex-start;gap:7px">${legend}</div></div>`;
+  }
+
+  function hbars(data, onClickAttr){
+    const max = Math.max(...data.map(d=>d.value), 1);
+    return data.map((d,i) => `
+      <div class="hbar-row">
+        <span class="lbl" ${onClickAttr ? `data-bar="${U.esc(d.label)}"` : ""} data-tip="${U.esc(d.label)}: ${d.value}">${U.esc(d.label)}</span>
+        <div class="hbar-track"><div class="hbar-fill" style="width:${(d.value/max*100).toFixed(1)}%;background:${d.color || PALETTE[i%PALETTE.length]}"></div></div>
+        <span class="num">${d.value}</span>
+      </div>`).join("");
+  }
+  return { donut, hbars };
+})();
+
+/* ══════════════════════════════════════════════════════════════
+   MÓDULO: SIDEBAR
+   ══════════════════════════════════════════════════════════════ */
+const Sidebar = (() => {
+  const open = new Set(U.store.get("acervo.navopen", ["colecoes","categorias"]));
+
+  function countBy(entity, key){
+    const map = new Map();
+    for (const r of (Store.state.collections[entity] || [])){
+      let v = Store.get(r, key);
+      if (U.isPlainObj(v)) v = Store.get(v,"nivel","nome","descricao","tipo") ?? "objeto";
+      v = (v == null || v === "") ? "Não informado" : String(v);
+      map.set(v, (map.get(v)||0)+1);
+    }
+    return [...map.entries()].sort((a,b)=>b[1]-a[1]);
+  }
+
+  function render(){
+    const nav = document.getElementById("sideNav");
+    const route = App.route;
+    const cols = Store.state.collections;
+    const item = (id, icon, label, count, extra="") => `
+      <button class="nav-item ${route.view===id && !route.filterVal ? "active":""}" data-nav="${U.esc(id)}" ${extra}>
+        <span class="icon">${Icons.svg(icon,15)}</span><span class="lbl">${U.esc(label)}</span>
+        ${count != null ? `<span class="nav-count">${count}</span>` : ""}</button>`;
+
+    let colItems = "";
+    for (const name of Object.keys(cols)){
+      colItems += item(name, Store.entityIcon(name), Store.entityTitle(name), cols[name].length);
+    }
+
+    // categorias dinâmicas: status de processos e prioridade de prazos (se existirem)
+    let cats = "";
+    const procName = Object.keys(cols).find(n => U.norm(n).startsWith("processo"));
+    const prazoName = Object.keys(cols).find(n => U.norm(n).startsWith("prazo"));
+    if (procName){
+      const st = countBy(procName, "status");
+      if (st.length) cats += `<div style="padding:3px 10px;font-size:10.5px;color:var(--text-3)">Processos por status</div>` +
+        st.map(([v,c]) => `<button class="nav-item ${route.view===procName&&route.filterKey==="status"&&route.filterVal===v?"active":""}"
+           data-nav="${U.esc(procName)}" data-fkey="status" data-fval="${U.esc(v)}">
+           <span class="dot" style="background:var(--${Legal.statusColor(v)})"></span><span class="lbl">${U.esc(v)}</span>
+           <span class="nav-count">${c}</span></button>`).join("");
+    }
+    if (prazoName){
+      const pr = countBy(prazoName, "prioridade");
+      if (pr.length) cats += `<div style="padding:8px 10px 3px;font-size:10.5px;color:var(--text-3)">Prazos por prioridade</div>` +
+        pr.map(([v,c]) => `<button class="nav-item ${route.view===prazoName&&route.filterKey==="prioridade"&&route.filterVal===v?"active":""}"
+           data-nav="${U.esc(prazoName)}" data-fkey="prioridade" data-fval="${U.esc(v)}">
+           <span class="dot" style="background:var(--${Legal.priColor(v)})"></span><span class="lbl">${U.esc(v)}</span>
+           <span class="nav-count">${c}</span></button>`).join("");
+    }
+
+    const section = (id, title, body) => `
+      <div class="nav-section ${open.has(id)?"":"closed"}" data-sec="${id}">
+        <button class="nav-title"><span class="chev">${Icons.svg("chevDown",11)}</span>${U.esc(title)}</button>
+        <div class="nav-body">${body}</div></div>`;
+
+    nav.innerHTML =
+      `<div class="nav-section"><div class="nav-body">
+        ${item("dashboard","home","Dashboard", null)}
+        ${item("favoritos","star","Favoritos", Fav.count())}
+       </div></div>` +
+      section("colecoes","Coleções", colItems || `<div style="padding:6px 10px;font-size:12px;color:var(--text-3)">Nenhum dado carregado.</div>`) +
+      (cats ? section("categorias","Categorias", `<div class="nav-sub">${cats}</div>`) : "");
+
+    nav.querySelectorAll("[data-nav]").forEach(b => b.addEventListener("click", () => {
+      App.go(b.dataset.nav, b.dataset.fkey ? { filterKey:b.dataset.fkey, filterVal:b.dataset.fval } : {});
+      document.getElementById("app").classList.remove("sidebar-open");
+    }));
+    nav.querySelectorAll(".nav-title").forEach(t => t.addEventListener("click", () => {
+      const sec = t.parentElement, id = sec.dataset.sec;
+      sec.classList.toggle("closed");
+      sec.classList.contains("closed") ? open.delete(id) : open.add(id);
+      U.store.set("acervo.navopen", [...open]);
+    }));
+  }
+  return { render };
+})();
+
+/* ══════════════════════════════════════════════════════════════
+   MÓDULO: VIEWS
+   ══════════════════════════════════════════════════════════════ */
+const Views = (() => {
+
+  /* ---------- Dashboard ---------- */
+  function dashboard(root){
+    const cols = Store.state.collections;
+    const names = Object.keys(cols);
+    const total = names.reduce((s,n)=>s+cols[n].length,0);
+    const accentByIdx = ["var(--blue)","var(--accent)","var(--orange)","var(--purple)","var(--green)","var(--red)"];
+
+    let cards = names.map((n,i) => `
+      <div class="stat-card" data-nav="${U.esc(n)}" style="--card-accent:${accentByIdx[i%accentByIdx.length]}">
+        <div class="k">${Icons.svg(Store.entityIcon(n),13)} ${U.esc(Store.entityTitle(n))}</div>
+        <div class="v">${cols[n].length}</div>
+        <div class="d">registros no acervo</div>
+      </div>`).join("");
+    cards += `
+      <div class="stat-card" style="--card-accent:var(--text-3)">
+        <div class="k">${Icons.svg("layers",13)} Total geral</div>
+        <div class="v">${total}</div>
+        <div class="d">em ${names.length} coleções</div>
+      </div>`;
+
+    const procName  = names.find(n => U.norm(n).startsWith("processo"));
+    const prazoName = names.find(n => U.norm(n).startsWith("prazo"));
+    const cliName   = names.find(n => U.norm(n).startsWith("cliente"));
+    const audName   = names.find(n => U.norm(n).startsWith("audiencia"));
+
+    const count = (entity, key) => {
+      const m = new Map();
+      for (const r of cols[entity] || []){
+        let v = Store.get(r, key);
+        if (U.isPlainObj(v)) v = Store.get(v,"nivel","nome","descricao") ?? "objeto";
+        v = (v == null || v==="") ? "Não informado" : String(v);
+        m.set(v,(m.get(v)||0)+1);
+      }
+      return [...m.entries()].sort((a,b)=>b[1]-a[1]);
+    };
+
+    let panels = "";
+    if (procName){
+      const st = count(procName,"status").map(([l,v])=>({label:l,value:v,color:`var(--${Legal.statusColor(l)})`}));
+      const fase = count(procName,"fase").map(([l,v])=>({label:l,value:v}));
+      panels += `<div class="grid-2">
+        <div class="panel"><h3><span class="icon">${Icons.svg("scale",14)}</span>Processos por status</h3>
+          <div data-barnav="${U.esc(procName)}|status">${Charts.hbars(st,true)}</div></div>
+        <div class="panel"><h3><span class="icon">${Icons.svg("chart",14)}</span>Processos por fase</h3>${Charts.donut(fase)}</div>
+      </div>`;
+    }
+    let row2 = "";
+    if (prazoName){
+      const pr = count(prazoName,"prioridade").map(([l,v])=>({label:l,value:v,color:`var(--${Legal.priColor(l)})`}));
+      row2 += `<div class="panel"><h3><span class="icon">${Icons.svg("clock",14)}</span>Prazos por prioridade</h3>
+        <div data-barnav="${U.esc(prazoName)}|prioridade">${Charts.hbars(pr,true)}</div></div>`;
+    }
+    if (cliName){
+      const list = cols[cliName];
+      const pj = list.filter(Legal.isPJ).length;
+      row2 += `<div class="panel"><h3><span class="icon">${Icons.svg("users",14)}</span>Clientes — pessoa física × jurídica</h3>
+        ${Charts.donut([{label:"Pessoa física",value:list.length-pj,color:"var(--blue)"},{label:"Pessoa jurídica",value:pj,color:"var(--accent)"}])}</div>`;
+    }
+    if (row2) panels += `<div class="grid-2">${row2}</div>`;
+
+    // próximos prazos e audiências
+    const upcoming = (entity, limit=6) => {
+      if (!entity) return "";
+      const meta = Store.state.meta[entity];
+      const dk = meta.keys.find(k => U.looksLikeDateKey(k) && cols[entity].some(r => U.parseDate(r[k])));
+      if (!dk) return "";
+      const items = [...cols[entity]]
+        .filter(r => U.parseDate(r[dk]))
+        .sort((a,b)=>U.parseDate(a[dk])-U.parseDate(b[dk]))
+        .filter(r => (U.daysUntil(r[dk]) ?? -999) >= -30)
+        .slice(0, limit);
+      if (!items.length) return "";
+      const idKey = meta.idKey;
+      const rows = items.map(r => {
+        const rel = Store.relationsFrom(entity).map(rl => Store.resolveParent(entity,r,rl)).filter(Boolean)
+          .map(p => Store.label(Store.relationsFrom(entity)[0].to, p)).join(" · ");
+        const d = U.daysUntil(r[dk]);
+        return `<div class="mini-item" data-openrec="${U.esc(entity)}|${U.esc(String(r[idKey]))}">
+          <span class="icon" style="color:var(--text-3)">${Icons.svg(Store.entityIcon(entity),14)}</span>
+          <div class="t"><div class="a">${U.esc(Store.label(entity,r))}</div>
+          <div class="b">${U.esc(rel || "")}</div></div>
+          <div style="text-align:right"><div class="when">${U.esc(U.fmtDateShort(r[dk]))}</div>${Legal.deadlineBadge(d)}</div></div>`;
+      }).join("");
+      return `<div class="panel"><h3><span class="icon">${Icons.svg("calendar",14)}</span>Próximos — ${U.esc(Store.entityTitle(entity))}</h3><div class="mini-list">${rows}</div></div>`;
+    };
+    const agenda = [upcoming(prazoName), upcoming(audName)].filter(Boolean).join("");
+    if (agenda) panels += `<div class="grid-2">${agenda}</div>`;
+
+    // estatísticas gerais textuais
+    const valores = procName ? cols[procName].map(r => {
+      let v = Store.get(r,"valor","valorCausa","valorDaCausa");
+      if (typeof v === "string") v = parseFloat(v.replace(/[R$\s.]/g,"").replace(",","."));
+      return typeof v === "number" && !isNaN(v) ? v : 0;
+    }).reduce((s,x)=>s+x,0) : 0;
+    const vencidos = prazoName ? cols[prazoName].filter(r => {
+      const dk = Store.state.meta[prazoName].keys.find(k => U.looksLikeDateKey(k) && U.parseDate(r[k]));
+      const d = dk ? U.daysUntil(r[dk]) : null;
+      const st = String(Store.get(r,"status") ?? "");
+      return d != null && d < 0 && !/conclu|cumprid|encerr/i.test(st);
+    }).length : 0;
+    panels += `<div class="panel"><h3><span class="icon">${Icons.svg("info",14)}</span>Estatísticas gerais</h3>
+      <div style="display:flex;gap:26px;flex-wrap:wrap;font-size:12.5px;color:var(--text-2)">
+        ${procName?`<span>Valor somado das causas: <b style="color:var(--text)">${U.esc(U.fmtMoney(valores))}</b></span>`:""}
+        ${prazoName?`<span>Prazos possivelmente vencidos: <b style="color:${vencidos? "var(--red)":"var(--green)"}">${vencidos}</b></span>`:""}
+        <span>Fonte dos dados: <b style="color:var(--text)">${U.esc(Store.state.sourceName)}</b></span>
+        <span>Relacionamentos mapeados: <b style="color:var(--text)">${Store.state.relations.length}</b></span>
+      </div></div>`;
+
+    root.innerHTML = `
+      ${Store.state.isDemo ? `<div class="demo-banner">${Icons.svg("info",15)}
+        Você está vendo dados de demonstração. Carregue o JSON do escritório para ver o acervo real.
+        <span class="spacer"></span><button class="btn sm primary" id="demoLoad">Carregar JSON</button></div>` : ""}
+      <div class="view-header"><div><h2>Visão geral do acervo</h2>
+        <div class="sub">Panorama de clientes, processos, prazos e audiências do escritório.</div></div></div>
+      <div class="cards">${cards}</div>${panels}`;
+
+    root.querySelectorAll(".stat-card[data-nav]").forEach(cd => cd.addEventListener("click", ()=>App.go(cd.dataset.nav)));
+    root.querySelectorAll("[data-barnav]").forEach(w => {
+      const [ent,key] = w.dataset.barnav.split("|");
+      w.querySelectorAll("[data-bar]").forEach(l => l.addEventListener("click", ()=>App.go(ent,{filterKey:key, filterVal:l.dataset.bar})));
+    });
+    root.querySelectorAll("[data-openrec]").forEach(el => el.addEventListener("click", () => {
+      const [ent,id] = el.dataset.openrec.split("|");
+      const rec = Store.state.index[ent]?.get(id);
+      if (rec) Inspector.open(ent, rec);
+    }));
+    const dl = root.querySelector("#demoLoad");
+    if (dl) dl.addEventListener("click", ()=>document.getElementById("fileInput").click());
+  }
+
+  /* ---------- colunas por entidade (dinâmicas + prioridade semântica) ---------- */
+  const PREFERRED = {
+    processos:["numero","numeroProcesso","codigo","codCliente","parteContraria","tribunal","comarca","vara","status","fase","advogado","advogadoResponsavel","valor","valorCausa","dataDistribuicao","distribuicao","ultimaMovimentacao","observacoes"],
+    clientes:["codigo","nome","razaoSocial","tipo","cpf","cnpj","cpfCnpj","documento","email","telefone","celular","cidade","endereco","status","observacoes"],
+    prazos:["codigo","descricao","data","dataPrazo","dataVencimento","codProcesso","responsavel","prioridade","urgencia","categoria","status","dependencias","observacoes"],
+    audiencias:["codigo","tipo","data","dataAudiencia","hora","horario","codProcesso","tribunal","comarca","vara","local","link","observacoes"]
+  };
+  function columnsFor(entity){
+    const meta = Store.state.meta[entity];
+    const pref = PREFERRED[U.norm(entity)] || [];
+    const ordered = [];
+    for (const p of pref){ const k = meta.keys.find(x => U.norm(x)===U.norm(p)); if (k && !ordered.includes(k)) ordered.push(k); }
+    for (const k of meta.keys){ if (!ordered.includes(k)) ordered.push(k); }
+    const rels = Store.relationsFrom(entity);
+    const relByKey = {}; rels.forEach(r => relByKey[r.fromKey]=r);
+
+    return ordered.map(k => {
+      const col = { key:k, label:U.humanize(k) };
+      const rel = relByKey[k];
+      if (rel){
+        col.label = Store.entityTitle(rel.to).replace(/s$/,"");
+        col.render = (r,q) => {
+          const p = Store.resolveParent(entity, r, rel);
+          const txt = p ? Store.label(rel.to, p) : `#${r[k]}`;
+          return q ? U.highlight(txt,q) : U.esc(txt);
+        };
+        col.sortVal = r => { const p = Store.resolveParent(entity,r,rel); return p ? Store.label(rel.to,p) : String(r[k]); };
+      } else if (/^status$|situacao/i.test(k)){
+        col.render = r => { const v = r[k]; return (v==null||U.isPlainObj(v)) ? Render.cell(v,k) : Legal.badge(v, Legal.statusColor(v)); };
+      } else if (/prioridade/i.test(k)){
+        col.render = r => { const v = r[k]; return (v==null||U.isPlainObj(v)) ? Render.cell(v,k) : Legal.badge(v, Legal.priColor(v), Legal.customColor(r)); };
+      } else if (/urgencia/i.test(k)){
+        col.render = r => {
+          const v = r[k];
+          const lbl = U.isPlainObj(v) ? (Store.get(v,"nivel","nome","descricao") ?? "—") : v;
+          return lbl == null ? "—" : Legal.badge(lbl, "orange", Legal.customColor(r));
+        };
+      } else if (U.looksLikeDateKey(k)){
+        col.render = (r,q) => {
+          const txt = U.parseDate(r[k]) ? U.fmtDate(r[k], /audiencia/i.test(entity)) : String(r[k] ?? "—");
+          const extra = U.norm(entity).startsWith("prazo") ? " " + Legal.deadlineBadge(U.daysUntil(r[k])) : "";
+          return (q ? U.highlight(txt,q) : U.esc(txt)) + extra;
+        };
+        col.sortVal = r => U.parseDate(r[k]) || String(r[k] ?? "");
+      } else if (U.looksLikeMoneyKey(k)){
+        col.render = r => U.esc(U.fmtMoney(r[k]));
+        col.sortVal = r => { let v=r[k]; if (typeof v==="string") v=parseFloat(v.replace(/[R$\s.]/g,"").replace(",",".")); return typeof v==="number"&&!isNaN(v)?v:0; };
+      }
+      return col;
+    });
+  }
+  function filtersFor(entity){
+    const meta = Store.state.meta[entity];
+    const out = [];
+    for (const key of ["status","fase","prioridade","categoria","tipo","comarca","tribunal","responsavel","advogado"]){
+      const k = meta.keys.find(x => U.norm(x)===U.norm(key));
+      if (!k) continue;
+      const vals = [...new Set((Store.state.collections[entity]||[]).map(r => {
+        let v = r[k]; if (U.isPlainObj(v)) v = Store.get(v,"nivel","nome","descricao"); return v==null||v===""?null:String(v);
+      }).filter(Boolean))].sort((a,b)=>a.localeCompare(b,"pt-BR"));
+      if (vals.length >= 2 && vals.length <= 40) out.push({label:U.humanize(k), key:k, values:vals});
+    }
+    return out.slice(0,3);
+  }
+
+  /* ---------- Lista genérica de coleção ---------- */
+  function collection(root, entity, params={}){
+    const list = Store.state.collections[entity] || [];
+    const editable = typeof FIELD_DEFS !== "undefined" && FIELD_DEFS[entity];
+    const newBtn = editable ? `<button class="btn primary sm" id="btnNewRec">${Icons.svg("plus",13)} Novo ${U.esc(ENTITY_SINGULAR_LABEL[entity]||"")}</button>` : "";
+    root.innerHTML = `
+      <div class="view-header"><div>
+        <h2>${U.esc(Store.entityTitle(entity))}</h2>
+        <div class="sub">${list.length} registros ${params.filterVal ? `· filtro ativo: <b>${U.esc(params.filterVal)}</b>` : ""} · clique em uma linha para ver todos os detalhes; botão direito abre o menu de ações.</div>
+      </div><div class="spacer"></div>${newBtn}</div>
+      <div id="tblHost"></div>`;
+    if (editable) document.getElementById("btnNewRec").addEventListener("click", () => CRUD.openForm(entity));
+    if (!list.length){
+      root.querySelector("#tblHost").innerHTML = `<div class="panel"><div class="empty">
+        ${Icons.svg("layers",34)}<h3>Sem registros nesta coleção</h3>
+        <p>${editable ? "Clique em “Novo” acima para cadastrar o primeiro." : `O JSON carregado não possui itens em “${U.esc(entity)}”.`}</p></div></div>`;
+      return;
+    }
+    const table = new DataTable({
+      entity,
+      container: root.querySelector("#tblHost"),
+      columns: columnsFor(entity),
+      getData: () => Store.state.collections[entity],
+      filters: filtersFor(entity),
+      initialFilter: params.filterKey ? { [params.filterKey]: params.filterVal } : null
+    });
+    table.render();
+  }
+
+  /* ---------- Favoritos ---------- */
+  function favoritos(root){
+    const list = Fav.list();
+    root.innerHTML = `
+      <div class="view-header"><div><h2>Favoritos</h2>
+      <div class="sub">Registros marcados para acesso rápido.</div></div></div>
+      <div id="favHost"></div>`;
+    const host = root.querySelector("#favHost");
+    if (!list.length){
+      host.innerHTML = `<div class="panel"><div class="empty">${Icons.svg("star",34)}
+        <h3>Nenhum favorito ainda</h3>
+        <p>Abra qualquer registro e use “Favoritar”, ou clique com o botão direito em uma linha da tabela.</p></div></div>`;
+      return;
+    }
+    host.innerHTML = list.map(({entity,rec}) => {
+      const idKey = Store.state.meta[entity].idKey;
+      const st = Store.get(rec,"status","situacao","prioridade");
+      return `<div class="gs-hit" data-openrec="${U.esc(entity)}|${U.esc(String(rec[idKey]))}">
+        <div class="a">${Icons.svg(Store.entityIcon(entity),13)} ${U.esc(Store.label(entity,rec))}
+          ${st!=null&&!U.isPlainObj(st)?Legal.badge(st, Legal.statusColor(st)):""}</div>
+        <div class="path">${U.esc(Store.entityTitle(entity))}</div></div>`;
+    }).join("");
+    host.querySelectorAll("[data-openrec]").forEach(el => el.addEventListener("click", () => {
+      const [e,id] = el.dataset.openrec.split("|");
+      const rec = Store.state.index[e]?.get(id);
+      if (rec) Inspector.open(e, rec);
+    }));
+  }
+
+  /* ---------- Busca global ---------- */
+  function search(root, params){
+    const q = params.q || "";
+    const nq = U.norm(q);
+    const hits = nq ? Store.state.searchIndex.filter(h => h.ntext.includes(nq)) : [];
+    const groups = {};
+    hits.forEach(h => (groups[h.entity] = groups[h.entity]||[]).push(h));
+    let html = `<div class="view-header"><div><h2>Resultados da pesquisa</h2>
+      <div class="sub">${hits.length} registros contêm “${U.esc(q)}” em qualquer campo, incluindo observações e estruturas internas.</div></div></div>`;
+    if (!hits.length){
+      html += `<div class="panel"><div class="empty">${Icons.svg("search",34)}
+        <h3>Nada encontrado</h3><p>Nenhum campo de nenhum registro contém “${U.esc(q)}”. Verifique a grafia ou tente um termo mais curto.</p></div></div>`;
+    }
+    for (const [entity, list] of Object.entries(groups)){
+      html += `<div class="gs-group"><h3>${Icons.svg(Store.entityIcon(entity),13)} ${U.esc(Store.entityTitle(entity))}
+        <span class="badge">${list.length}</span></h3>` +
+        list.slice(0,80).map(h => {
+          const i = h.ntext.indexOf(nq);
+          const around = h.text.slice(Math.max(0, i-60), i+120);
+          return `<div class="gs-hit" data-openrec="${U.esc(entity)}|${U.esc(h.id)}">
+            <div class="a">${U.highlight(Store.label(entity, h.rec), q)}</div>
+            <div class="b">…${U.highlight(around, q)}…</div>
+            <div class="path">${U.esc(Store.entityTitle(entity))} · id ${U.esc(h.id)}</div></div>`;
+        }).join("") + `</div>`;
+    }
+    root.innerHTML = html;
+    root.querySelectorAll("[data-openrec]").forEach(el => el.addEventListener("click", () => {
+      const [e,id] = el.dataset.openrec.split("|");
+      const rec = Store.state.index[e]?.get(id);
+      if (rec) Inspector.open(e, rec);
+    }));
+  }
+
+  return { dashboard, collection, favoritos, search };
+})();
+
+/* ══════════════════════════════════════════════════════════════
+   MÓDULO: APP — roteamento, tema, carregamento de JSON
+   ══════════════════════════════════════════════════════════════ */
+const App = (() => {
+  const route = { view:"dashboard", filterKey:null, filterVal:null, q:"" };
+
+  function breadcrumb(){
+    const bc = document.getElementById("breadcrumb");
+    const parts = [`<span class="crumb link" data-go="dashboard">${Icons.svg("home",12)}</span>`];
+    if (route.view === "dashboard") parts.push(`<span class="sep">/</span><span class="crumb current">Dashboard</span>`);
+    else if (route.view === "favoritos") parts.push(`<span class="sep">/</span><span class="crumb current">Favoritos</span>`);
+    else if (route.view === "busca") parts.push(`<span class="sep">/</span><span class="crumb current">Pesquisa: “${U.esc(route.q)}”</span>`);
+    else {
+      parts.push(`<span class="sep">/</span><span class="crumb ${route.filterVal?"link":"current"}" data-go="${U.esc(route.view)}">${U.esc(Store.entityTitle(route.view))}</span>`);
+      if (route.filterVal) parts.push(`<span class="sep">/</span><span class="crumb current">${U.esc(route.filterVal)}</span>`);
+    }
+    bc.innerHTML = parts.join("");
+    bc.querySelectorAll("[data-go]").forEach(el => el.addEventListener("click", ()=>go(el.dataset.go)));
+  }
+
+  let renderToken = 0;
+  function renderView(){
+    const token = ++renderToken;
+    const content = document.getElementById("content");
+    UI.loading(true);
+    // renderização assíncrona: mantém a interface fluida com bases grandes
+    requestAnimationFrame(() => {
+      if (token !== renderToken) return;
+      try{
+        if (route.view === "dashboard") Views.dashboard(content);
+        else if (route.view === "favoritos") Views.favoritos(content);
+        else if (route.view === "busca") Views.search(content, {q:route.q});
+        else if (Store.state.collections[route.view]) Views.collection(content, route.view, route);
+        else Views.dashboard(content);
+      } finally {
+        UI.loading(false);
+        content.scrollTop = 0;
+        breadcrumb();
+        Sidebar.render();
+        Icons.hydrate(content);
+      }
+    });
+  }
+
+  function go(view, extra={}){
+    route.view = view;
+    route.filterKey = extra.filterKey || null;
+    route.filterVal = extra.filterVal || null;
+    route.q = extra.q || "";
+    renderView();
+  }
+  function refreshIfView(v){ if (route.view === v) renderView(); }
+
+  /* ---------- tema ---------- */
+  function applyTheme(t){
+    document.documentElement.dataset.theme = t;
+    U.store.set("acervo.theme", t);
+    const b = document.getElementById("btnTheme");
+    b.innerHTML = Icons.svg(t === "dark" ? "sun" : "moon", 15);
+    b.dataset.tip = t === "dark" ? "Mudar para tema claro" : "Mudar para tema escuro";
+  }
+
+  /* ---------- importar JSON (mescla com o banco de dados) ---------- */
+  async function importJsonIntoSupabase(text, name){
+    UI.loading(true);
+    try{
+      const json = JSON.parse(text);
+      const tables = ["clientes","processos","audiencias","prazos","honorarios"];
+      for (const t of tables){
+        const rows = Array.isArray(json[t]) ? json[t] : [];
+        if (rows.length) {
+          const { error } = await sb.from(t).upsert(rows, { onConflict: "codigo" });
+          if (error) throw error;
+        }
+      }
+      await refreshFromSupabase();
+      Toast.show(`“${name}” importado para o banco de dados.`, "ok", 4200);
+      Inspector.close();
+      go("dashboard");
+    } catch(err){
+      Toast.show("Falha ao importar: " + err.message, "err", 5200);
+    } finally { UI.loading(false); }
+  }
+
+  function bindLoaders(){
+    const input = document.getElementById("fileInput");
+    document.getElementById("btnLoadJson").addEventListener("click", ()=>input.click());
+    input.addEventListener("change", () => {
+      const f = input.files[0]; if (!f) return;
+      const rd = new FileReader();
+      rd.onload = () => importJsonIntoSupabase(rd.result, f.name);
+      rd.readAsText(f, "utf-8");
+      input.value = "";
+    });
+    // arrastar e soltar
+    let dragDepth = 0;
+    const ov = document.getElementById("dropOverlay");
+    window.addEventListener("dragenter", e => { e.preventDefault(); dragDepth++; ov.classList.add("on"); });
+    window.addEventListener("dragleave", e => { e.preventDefault(); if (--dragDepth <= 0){ dragDepth=0; ov.classList.remove("on"); } });
+    window.addEventListener("dragover", e => e.preventDefault());
+    window.addEventListener("drop", e => {
+      e.preventDefault(); dragDepth = 0; ov.classList.remove("on");
+      const f = e.dataTransfer.files && e.dataTransfer.files[0];
+      if (!f) return;
+      const rd = new FileReader();
+      rd.onload = () => importJsonIntoSupabase(rd.result, f.name);
+      rd.readAsText(f, "utf-8");
+    });
+    // colar JSON diretamente (Ctrl+V fora de campos de texto)
+    window.addEventListener("paste", e => {
+      if (e.target && e.target.closest && e.target.closest("input,textarea,select")) return;
+      const t = e.clipboardData && e.clipboardData.getData("text");
+      if (t && t.trim().startsWith("{")) importJsonIntoSupabase(t, "JSON colado");
+    });
+  }
+
+  /* ---------- atalhos e busca global ---------- */
+  function bindGlobal(){
+    const gs = document.getElementById("globalSearch");
+    gs.addEventListener("input", U.debounce(() => {
+      const q = gs.value.trim();
+      if (q.length >= 2) go("busca", {q});
+      else if (!q && route.view === "busca") go("dashboard");
+    }, 240));
+    gs.addEventListener("keydown", e => { if (e.key === "Escape"){ gs.value=""; gs.blur(); if (route.view==="busca") go("dashboard"); } });
+
+    document.addEventListener("keydown", e => {
+      if (e.key === "/" && !e.target.closest("input,textarea,select")){ e.preventDefault(); gs.focus(); gs.select(); }
+      if (e.key === "Escape"){
+        if (document.getElementById("modalWrap").classList.contains("open")) UI.closeModal();
+        else Inspector.close();
+        UI.closeMenus();
+      }
+    });
+
+    document.getElementById("btnTheme").addEventListener("click", () => {
+      applyTheme(document.documentElement.dataset.theme === "dark" ? "light" : "dark");
+    });
+    document.getElementById("btnSidebar").addEventListener("click", () => {
+      const app = document.getElementById("app");
+      innerWidth <= 860 ? app.classList.toggle("sidebar-open") : app.classList.toggle("sidebar-collapsed");
+    });
+    document.getElementById("btnExport").addEventListener("click", () => {
+      if (!Store.state.raw){ Toast.show("Nenhum dado carregado para exportar.","info"); return; }
+      U.download("daniel-dias-dados.json", JSON.stringify(Store.state.raw, null, 2));
+      Toast.show("JSON exportado.", "ok");
+    });
+    document.getElementById("btnLogout").addEventListener("click", doLogout);
+  }
+
+  async function init(){
+    applyTheme(U.store.get("acervo.theme", "dark"));
+    Icons.hydrate();
+    bindLoaders();
+    bindGlobal();
+    UI.loading(true);
+    try{
+      await refreshFromSupabase();
+    } catch(e){
+      Toast.show("Erro ao carregar dados do banco: " + e.message, "err", 6000);
+    } finally { UI.loading(false); }
+    go("dashboard");
+  }
+
+  return { init, go, route, refreshIfView };
+})();
+
+/* ══════════════════════════════════════════════════════════════
+   MÓDULO: CRUD — formulários de cadastro/edição gravando no Supabase
+   ══════════════════════════════════════════════════════════════ */
+const ENTITY_SINGULAR_LABEL = { clientes:"Cliente", processos:"Processo", audiencias:"Audiência", prazos:"Prazo", honorarios:"Honorário" };
+const FIELD_DEFS = {
+  clientes: [
+    {key:"nome", label:"Nome / Razão Social", required:true, span:2},
+    {key:"cpfCnpj", label:"CPF/CNPJ"},
+    {key:"tipo", label:"Tipo", type:"select", options:["Pessoa Física","Pessoa Jurídica"]},
+    {key:"telefone", label:"Telefone"},
+    {key:"email", label:"E-mail", type:"email"},
+    {key:"endereco", label:"Endereço", span:2},
+    {key:"cidade", label:"Cidade"},
+    {key:"uf", label:"UF"},
+    {key:"obs", label:"Observações", type:"textarea", span:2}
+  ],
+  processos: [
+    {key:"codCliente", label:"Cliente", type:"ref", ref:"clientes", required:true, span:2},
+    {key:"numero", label:"Nº do Processo", required:true},
+    {key:"tipoAcao", label:"Tipo de Ação"},
+    {key:"tribunal", label:"Tribunal"},
+    {key:"vara", label:"Vara"},
+    {key:"comarca", label:"Comarca"},
+    {key:"status", label:"Status", type:"select", options:["Em andamento","Suspenso","Encerrado","Arquivado"]},
+    {key:"fase", label:"Fase"},
+    {key:"dataDistribuicao", label:"Data Distribuição", type:"date"},
+    {key:"valorCausa", label:"Valor da Causa (R$)", type:"number"},
+    {key:"parteContraria", label:"Parte Contrária", span:2},
+    {key:"obs", label:"Observações", type:"textarea", span:2}
+  ],
+  audiencias: [
+    {key:"codProcesso", label:"Processo", type:"ref", ref:"processos", required:true, span:2},
+    {key:"data", label:"Data", type:"date", required:true},
+    {key:"horario", label:"Horário", type:"time"},
+    {key:"tipo", label:"Tipo"},
+    {key:"status", label:"Status", type:"select", options:["Agendada","Realizada","Cancelada","Adiada"]},
+    {key:"local", label:"Local", span:2},
+    {key:"obs", label:"Observações", type:"textarea", span:2}
+  ],
+  prazos: [
+    {key:"descricao", label:"Descrição", required:true, span:2},
+    {key:"codProcesso", label:"Processo (opcional)", type:"ref", ref:"processos", span:2},
+    {key:"dataLimite", label:"Data Limite", type:"date"},
+    {key:"status", label:"Status"},
+    {key:"obs", label:"Observações", type:"textarea", span:2}
+  ],
+  honorarios: [
+    {key:"codProcesso", label:"Processo", type:"ref", ref:"processos", required:true, span:2},
+    {key:"descricao", label:"Descrição", required:true, span:2},
+    {key:"valor", label:"Valor (R$)", type:"number", required:true},
+    {key:"dataVencimento", label:"Vencimento", type:"date"},
+    {key:"status", label:"Status", type:"select", options:["Pendente","Pago","Atrasado","Cancelado"]},
+    {key:"obs", label:"Observações", type:"textarea", span:2}
+  ]
+};
+
+const CRUD = (() => {
+  function refOptions(refEntity, current){
+    const idKey = Store.state.meta[refEntity]?.idKey || "codigo";
+    const list = Store.state.collections[refEntity] || [];
+    return `<option value="">Selecione...</option>` + list.map(r =>
+      `<option value="${U.esc(r[idKey])}" ${String(current)===String(r[idKey])?"selected":""}>${U.esc(Store.label(refEntity,r))}</option>`
+    ).join("");
+  }
+  function fieldHTML(f, rec){
+    const val = rec ? (rec[f.key] ?? "") : "";
+    const cls = "fg" + (f.span===2 ? " full" : "");
+    let input;
+    if (f.type==="select") input = `<select name="${f.key}" ${f.required?"required":""}>${(f.options||[]).map(o=>`<option ${val===o?"selected":""}>${U.esc(o)}</option>`).join("")}</select>`;
+    else if (f.type==="ref") input = `<select name="${f.key}" ${f.required?"required":""}>${refOptions(f.ref, val)}</select>`;
+    else if (f.type==="textarea") input = `<textarea name="${f.key}" rows="2">${U.esc(val)}</textarea>`;
+    else input = `<input name="${f.key}" type="${f.type||"text"}" ${f.required?"required":""} value="${U.esc(val)}" ${f.type==="number"?'step="0.01"':""}>`;
+    return `<div class="${cls}"><label>${U.esc(f.label)}</label>${input}</div>`;
+  }
+  function nextCode(entity){
+    const prefix = { clientes:"CLI", processos:"PROC", audiencias:"AUD", prazos:"PRZ", honorarios:"HON" }[entity];
+    const list = Store.state.collections[entity] || [];
+    let max = 0;
+    for (const r of list){
+      const m = String(r.codigo || "").match(new RegExp(`^${prefix}-(\\d+)$`));
+      if (m) max = Math.max(max, parseInt(m[1], 10));
+    }
+    return `${prefix}-${String(max + 1).padStart(3, "0")}`;
+  }
+  function openForm(entity, codigo){
+    const fields = FIELD_DEFS[entity];
+    if (!fields){ Toast.show("Sem formulário definido para esta coleção.", "info"); return; }
+    const rec = codigo ? Store.state.index[entity]?.get(String(codigo)) : null;
+    const title = (codigo ? "Editar " : "Novo ") + ENTITY_SINGULAR_LABEL[entity];
+    UI.openModal(title, `
+      <form id="crudForm" class="form-grid2">${fields.map(f => fieldHTML(f, rec)).join("")}</form>
+      <div class="m-foot">
+        <button type="button" class="btn ghost" id="crudCancel">Cancelar</button>
+        <button type="submit" form="crudForm" class="btn primary" id="crudSave">Salvar</button>
+      </div>
+    `);
+    document.getElementById("crudCancel").addEventListener("click", UI.closeModal);
+    document.getElementById("crudForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const fd = Object.fromEntries(new FormData(e.target).entries());
+      await save(entity, codigo, fd);
+    });
+  }
+  async function save(entity, codigo, fields){
+    const btn = document.getElementById("crudSave");
+    if (btn){ btn.disabled = true; btn.textContent = "Salvando..."; }
+    try{
+      const row = { ...fields, codigo: codigo || nextCode(entity) };
+      const { error } = await sb.from(entity).upsert(row, { onConflict: "codigo" });
+      if (error) throw error;
+      await refreshFromSupabase();
+      UI.closeModal();
+      Toast.show("Salvo!", "ok");
+      App.refreshIfView(entity);
+      const fresh = Store.state.index[entity]?.get(row.codigo);
+      if (fresh && Inspector.current && Inspector.current.entity === entity) Inspector.open(entity, fresh);
+    } catch(e){ Toast.show("Erro ao salvar: " + e.message, "err", 5000); }
+    finally { if (btn){ btn.disabled = false; btn.textContent = "Salvar"; } }
+  }
+  async function remove(entity, codigo){
+    if (!confirm("Excluir este registro? Essa ação não pode ser desfeita.")) return;
+    try{
+      const { error } = await sb.from(entity).delete().eq("codigo", codigo);
+      if (error) throw error;
+      await refreshFromSupabase();
+      Toast.show("Excluído.", "ok");
+      Inspector.close();
+      App.refreshIfView(entity);
+    } catch(e){ Toast.show("Erro ao excluir: " + e.message, "err", 5000); }
+  }
+  async function addMovimentacao(procCodigo, dataMov, horaMov, descricao){
+    const proc = Store.state.index["processos"]?.get(String(procCodigo));
+    if (!proc) return;
+    const movs = Array.isArray(proc.movimentacoes) ? proc.movimentacoes.slice() : [];
+    movs.push({ codigo: `MOV-${String(movs.length + 1).padStart(3, "0")}`, data: dataMov, hora: horaMov, descricao });
+    try{
+      const { error } = await sb.from("processos").update({ movimentacoes: movs, ultimaMovimentacao: dataMov }).eq("codigo", procCodigo);
+      if (error) throw error;
+      await refreshFromSupabase();
+      Toast.show("Movimentação adicionada!", "ok");
+      const fresh = Store.state.index["processos"]?.get(String(procCodigo));
+      if (fresh) Inspector.open("processos", fresh);
+    } catch(e){ Toast.show("Erro: " + e.message, "err"); }
+  }
+  return { openForm, save, remove, addMovimentacao, nextCode };
+})();
+</script>
+
+
+</body></html>
