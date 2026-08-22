@@ -1069,6 +1069,11 @@ const Store = (() => {
     state.sourceName = sourceName;
     state.isDemo = isDemo;
     state.collections = findCollections(json);
+    // garante que as coleções principais nunca somem do menu lateral quando estiverem vazias
+    // (ex.: você marcou o último prazo como concluído e excluiu — "Prazos" não pode sumir do menu)
+    for (const core of ["clientes","processos","audiencias","prazos","honorarios"]){
+      if (!state.collections[core] && Array.isArray(json[core])) state.collections[core] = json[core];
+    }
     if (!Object.keys(state.collections).length) throw new Error("Nenhuma coleção de registros foi encontrada no JSON.");
     state.meta = {}; state.index = {};
     for (const [name, arr] of Object.entries(state.collections)){
