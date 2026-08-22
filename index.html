@@ -739,15 +739,38 @@ async function doLogout(){
 
 async function fetchAllFromSupabase(){
   const tables = ["clientes","processos","audiencias","prazos","honorarios"];
-  const results = await Promise.all(tables.map(t => sb.from(t).select("*")));
+
+  // Garante que a sessão está válida ANTES de disparar as buscas. Sem isso, quando o
+  // token está prestes a expirar, uma das 5 buscas paralelas pode sair com o token
+  // velho e voltar 401 — e aquela tabela aparece vazia (era o bug de "Prazos sumiu",
+  // depois "Processos sumiu": a tabela que falhava era sempre uma diferente).
+  try { await sb.auth.getSession(); } catch(e){}
+
   const json = {};
-  const falhas = [];
-  results.forEach((r, i) => {
-    if (r.error){ falhas.push(tables[i]); json[tables[i]] = []; return; }
-    json[tables[i]] = r.data || [];
-  });
+  const erros = {};
+
+  async function buscar(t){
+    const r = await sb.from(t).select("*");
+    if (r.error){ erros[t] = r.error; json[t] = []; }
+    else { delete erros[t]; json[t] = r.data || []; }
+  }
+
+  await Promise.all(tables.map(buscar));
+
+  // Segunda tentativa só para as que falharam (erro momentâneo de token/rede).
+  const falhas1 = Object.keys(erros);
+  if (falhas1.length){
+    console.warn("Falha na 1ª tentativa:", falhas1.map(t => t + ": " + (erros[t].message || "")).join(" | "));
+    try { await sb.auth.refreshSession(); } catch(e){}
+    await new Promise(res => setTimeout(res, 600));
+    await Promise.all(falhas1.map(buscar));
+  }
+
+  const falhas = Object.keys(erros);
   if (falhas.length){
-    Toast.show(`Não foi possível carregar: ${falhas.join(", ")}. As demais coleções carregaram normalmente.`, "err", 7000);
+    falhas.forEach(t => console.error("Erro ao carregar tabela " + t + ":", erros[t]));
+    const detalhe = falhas.map(t => `${t} (${erros[t].code || "?"}: ${erros[t].message || "erro desconhecido"})`).join("; ");
+    Toast.show(`Não foi possível carregar: ${detalhe}. As demais coleções carregaram normalmente.`, "err", 12000);
   }
   return json;
 }
