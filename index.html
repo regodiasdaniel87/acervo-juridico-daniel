@@ -741,10 +741,14 @@ async function fetchAllFromSupabase(){
   const tables = ["clientes","processos","audiencias","prazos","honorarios"];
   const results = await Promise.all(tables.map(t => sb.from(t).select("*")));
   const json = {};
+  const falhas = [];
   results.forEach((r, i) => {
-    if (r.error) throw r.error;
+    if (r.error){ falhas.push(tables[i]); json[tables[i]] = []; return; }
     json[tables[i]] = r.data || [];
   });
+  if (falhas.length){
+    Toast.show(`Não foi possível carregar: ${falhas.join(", ")}. As demais coleções carregaram normalmente.`, "err", 7000);
+  }
   return json;
 }
 async function refreshFromSupabase(){
