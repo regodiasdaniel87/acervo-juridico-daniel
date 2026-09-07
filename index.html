@@ -528,6 +528,7 @@ select.sel{
     </div>
     <nav id="sideNav"></nav>
     <div class="side-footer" style="flex-direction:column;align-items:stretch;gap:6px">
+      <button class="btn sm" id="btnLoadPdf" data-tip="Ler o PDF completo do processo (PJe) e atualizar as movimentacoes automaticamente"><span data-icon="upload"></span> Importar PDF do processo</button>
       <div style="display:flex;gap:8px">
         <button class="btn sm" id="btnLoadJson" data-tip="Importar um JSON pra dentro do banco de dados (mescla com o que já existe)"><span data-icon="upload"></span> Importar JSON</button>
         <button class="btn sm icon-only" id="btnTheme" data-tip="Alternar tema"><span data-icon="moon"></span></button>
@@ -574,12 +575,13 @@ select.sel{
 </div>
 
 <div id="toasts"></div>
-<div id="dropOverlay"><div class="box"><div style="font-size:34px;margin-bottom:8px">§</div>Solte o arquivo JSON para carregar o acervo</div></div>
+<div id="dropOverlay"><div class="box"><div style="font-size:34px;margin-bottom:8px">§</div>Solte o arquivo — JSON do acervo ou PDF do processo</div></div>
 <div id="loading" class=""><div class="spinner"></div></div>
 <div id="tooltip" style="display: none;"></div>
 <div class="menu" id="ctxMenu"></div>
 <div class="menu" id="colMenu"></div>
 <input type="file" id="fileInput" accept=".json,application/json" hidden="">
+<input type="file" id="pdfInput" accept=".pdf,application/pdf" hidden="">
 
 <script>
 "use strict";
@@ -2122,9 +2124,16 @@ const App = (() => {
       e.preventDefault(); dragDepth = 0; ov.classList.remove("on");
       const f = e.dataTransfer.files && e.dataTransfer.files[0];
       if (!f) return;
+      if (/\.pdf$/i.test(f.name)){ PJePdf.importar(f); return; }
       const rd = new FileReader();
       rd.onload = () => importJsonIntoSupabase(rd.result, f.name);
       rd.readAsText(f, "utf-8");
+    });
+    const pdfIn = document.getElementById("pdfInput");
+    document.getElementById("btnLoadPdf").addEventListener("click", ()=>pdfIn.click());
+    pdfIn.addEventListener("change", () => {
+      const f = pdfIn.files[0]; pdfIn.value = "";
+      if (f) PJePdf.importar(f);
     });
     // colar JSON diretamente (Ctrl+V fora de campos de texto)
     window.addEventListener("paste", e => {
@@ -2240,6 +2249,246 @@ const FIELD_DEFS = {
     {key:"obs", label:"Observações", type:"textarea", span:2}
   ]
 };
+
+/* ══════════════════════════════════════════════════════════════
+   MÓDULO: IMPORTAR O PDF DO PROCESSO (PJe)
+   O PDF completo do PJe começa com uma capa que lista todos os
+   documentos juntados (Id, data, nome e tipo). É dela que saem as
+   movimentações — o resto do arquivo é o inteiro teor das peças,
+   que não precisa ser lido.
+   ══════════════════════════════════════════════════════════════ */
+const PJePdf = (() => {
+  const CDN = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/";
+  let promessaLib = null;
+
+  // a biblioteca de leitura só é baixada quando o usuário importa um PDF de verdade
+  function lib(){
+    if (window.pdfjsLib) return Promise.resolve(window.pdfjsLib);
+    if (promessaLib) return promessaLib;
+    promessaLib = new Promise((ok, falhou) => {
+      const s = document.createElement("script");
+      s.src = CDN + "pdf.min.js";
+      s.onload = () => { window.pdfjsLib.GlobalWorkerOptions.workerSrc = CDN + "pdf.worker.min.js"; ok(window.pdfjsLib); };
+      s.onerror = () => { promessaLib = null; falhou(new Error("não consegui baixar o leitor de PDF — verifique a internet")); };
+      document.head.appendChild(s);
+    });
+    return promessaLib;
+  }
+
+  // remonta as linhas da página: pedaços distantes na horizontal são colunas
+  // diferentes da tabela, então viram palavras separadas em vez de texto grudado
+  function linhasDaPagina(conteudo){
+    const porAltura = new Map();
+    for (const it of conteudo.items){
+      if (!it.str) continue;
+      const y = Math.round(it.transform[5]);
+      if (!porAltura.has(y)) porAltura.set(y, []);
+      porAltura.get(y).push({ x: it.transform[4], largura: it.width || 0, txt: it.str });
+    }
+    return [...porAltura.entries()]
+      .sort((a, b) => b[0] - a[0])
+      .map(([, itens]) => {
+        itens.sort((a, b) => a.x - b.x);
+        let linha = "", fimAnterior = null;
+        for (const it of itens){
+          if (fimAnterior !== null && it.x - fimAnterior > 1) linha += " ";
+          linha += it.txt;
+          fimAnterior = it.x + it.largura;
+        }
+        return linha.replace(/\s+/g, " ").trim();
+      })
+      .filter(Boolean).join("\n");
+  }
+
+  async function textoDaCapa(file){
+    const pdfjs = await lib();
+    const doc = await pdfjs.getDocument({ data: await file.arrayBuffer() }).promise;
+    const paginas = [];
+    for (let i = 1; i <= Math.min(doc.numPages, 15); i++){
+      const pagina = await doc.getPage(i);
+      const texto = linhasDaPagina(await pagina.getTextContent());
+      // "Num. 12345 - Pág. 1" marca o começo do inteiro teor: a capa acabou aqui
+      if (/Num\.\s*\d+\s*-\s*P[áa]g\./i.test(texto)) break;
+      paginas.push(texto);
+    }
+    return paginas.join("\n");
+  }
+
+  const TIPOS = ["Certidão de Custas","Petição Inicial","Petição (outras)","Ata da Audiência",
+    "Comprovante de Endereço","Outros Documentos","DOCUMENTO COMPROBATÓRIO","Sentença","Acórdão",
+    "Decisão","Despacho","Intimação","Citação","Certidão","Comprovante","Procuração","Contestação",
+    "Documentos","Petição","Sistema","Ofício","Mandado","Parecer","Laudo","Termo","Edital","Alvará"];
+
+  // na leitura do PDF o tipo costuma vir antes do nome do documento
+  // ("Sentença Sentença", "Petição (outras) RECURSO_INOMINADO"), mas há
+  // layouts em que ele vem depois — por isso procuro nas duas pontas
+  function separarTipo(bruto){
+    const limpo = String(bruto).replace(/\s+/g, " ").trim().slice(0, 200);
+    const escapar = t => t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    for (const t of TIPOS){
+      const ini = new RegExp("^\\s*" + escapar(t) + "\\s*", "i");
+      if (ini.test(limpo)) return { titulo: limpo.replace(ini, "").trim(), tipo: t };
+    }
+    for (const t of TIPOS){
+      const fim = new RegExp("\\s*" + escapar(t) + "\\s*$", "i");
+      if (fim.test(limpo)) return { titulo: limpo.replace(fim, "").trim(), tipo: t };
+    }
+    return { titulo: limpo, tipo: "" };
+  }
+
+  const paraISO = br => {
+    const m = String(br).match(/(\d{2})\/(\d{2})\/(\d{4})/);
+    return m ? `${m[3]}-${m[2]}-${m[1]}` : "";
+  };
+
+  function documentos(texto){
+    // a lista começa no cabeçalho "Id. Data da Assinatura Documento Tipo"
+    const inicio = texto.search(/Id\.?\s*Data/i);
+    const alvo = inicio >= 0 ? texto.slice(inicio) : texto;
+    // cada item é um Id longo seguido da data e, logo abaixo, do horário
+    const re = /(\d{6,12})\s*(\d{2}\/\d{2}\/\d{4})[\s\n]*(\d{1,2}:\d{2})?/g;
+    const marcos = [];
+    let m;
+    while ((m = re.exec(alvo)) !== null) marcos.push({ id: m[1], data: m[2], hora: m[3] || "", ini: m.index, fim: re.lastIndex });
+    return marcos.map((mk, i) => {
+      let bruto = alvo.slice(mk.fim, i + 1 < marcos.length ? marcos[i + 1].ini : alvo.length)
+                      .replace(/\s+/g, " ").trim().slice(0, 200);
+      // dependendo do layout o horário sobra no fim do bloco em vez de vir junto da data
+      let hora = mk.hora;
+      const h = bruto.match(/(\d{1,2}:\d{2})\s*$/);
+      if (h){ hora = hora || h[1]; bruto = bruto.slice(0, h.index).trim(); }
+      const { titulo, tipo } = separarTipo(bruto);
+      return { idDoc: mk.id, data: paraISO(mk.data), hora, titulo, tipo };
+    }).filter(d => d.data);
+  }
+
+  function cabecalho(texto){
+    const pega = re => { const m = texto.match(re); return m ? String(m[1]).replace(/\s+/g," ").trim() : ""; };
+    const valor = pega(/Valor da causa:\s*R\$\s*([\d.,]+)/i);
+    const orgao = pega(/[ÓO]rg[ãa]o julgador:\s*([^\n]+)/i);
+    const comarca = (orgao.match(/Comarca de\s+([^,\n]+)/i) || [])[1] || "";
+    return {
+      numero: pega(/N[úu]mero:\s*([\d.\-]+)/i),
+      classe: pega(/Classe:\s*([^\n]+)/i),
+      orgao, comarca: comarca.trim(),
+      distribuicao: paraISO(pega(/distribui[çc][ãa]o\s*:?\s*(\d{2}\/\d{2}\/\d{4})/i)),
+      valorCausa: valor ? valor.replace(/\./g, "").replace(",", ".") : "",
+      assuntos: pega(/Assuntos?:\s*([^\n]+)/i)
+    };
+  }
+
+  const soDigitos = v => String(v ?? "").replace(/\D/g, "");
+  const descricaoDe = d => (d.tipo && d.titulo && U.norm(d.titulo) !== U.norm(d.tipo))
+    ? `${d.tipo} — ${d.titulo}` : (d.tipo || d.titulo || "Documento juntado");
+
+  async function importar(file){
+    UI.loading(true);
+    let dados;
+    try{
+      const texto = await textoDaCapa(file);
+      dados = { capa: cabecalho(texto), docs: documentos(texto) };
+    } catch(e){
+      Toast.show("Falha ao ler o PDF: " + e.message, "err", 6000);
+      return;
+    } finally { UI.loading(false); }
+
+    const { capa, docs } = dados;
+    if (!capa.numero || !docs.length){
+      Toast.show("Não reconheci este PDF como processo do PJe (falta a capa com a lista de documentos).", "err", 7000);
+      return;
+    }
+    const proc = (Store.state.collections.processos || []).find(p => soDigitos(p.numero) === soDigitos(capa.numero));
+    if (!proc){
+      UI.openModal("Processo não cadastrado", `
+        <p style="font-size:13px;line-height:1.7;color:var(--text-2)">
+          O PDF é do processo <b style="color:var(--text)">${U.esc(capa.numero)}</b>, que ainda não existe no acervo.<br><br>
+          Cadastre o processo primeiro (menu <b>Processos</b> &rarr; <b>Novo Processo</b>) e importe o PDF de novo —
+          aí as ${docs.length} movimentações entram sozinhas.
+        </p>`);
+      return;
+    }
+
+    const doPdf = docs.map(d => ({ idDoc: d.idDoc, data: d.data, hora: d.hora, descricao: descricaoDe(d) }))
+                      .sort((a, b) => String(a.data).localeCompare(String(b.data)));
+    const atuais = Array.isArray(proc.movimentacoes) ? proc.movimentacoes.slice() : [];
+    const jaTem = new Set(atuais.filter(m => m.idDoc).map(m => String(m.idDoc)));
+    const novos = doPdf.filter(m => !jaTem.has(String(m.idDoc)));
+    // na primeira importação o histórico foi digitado à mão e não tem o Id dos
+    // documentos, então não dá para casar item a item: o padrão vira substituir
+    const primeiraVez = !atuais.some(m => m.idDoc);
+
+    const preencher = {};
+    const sugestoes = { vara: capa.orgao, comarca: capa.comarca, dataDistribuicao: capa.distribuicao, valorCausa: capa.valorCausa, tipoAcao: capa.assuntos };
+    for (const [k, v] of Object.entries(sugestoes)) if (v && !String(proc[k] ?? "").trim()) preencher[k] = v;
+
+    const mostrar = primeiraVez ? doPdf : novos;
+    const alerta = mostrar.filter(m => /senten|ac[óo]rd|decis|despacho|intima|cita[çc]/i.test(m.descricao));
+    const linha = m => `<tr><td style="white-space:nowrap;padding:4px 10px 4px 0;color:var(--text-3)">${U.esc(m.data)}</td><td style="padding:4px 0">${U.esc(m.descricao)}</td></tr>`;
+    const lista = mostrar.slice(-30).reverse().map(linha).join("") || `<tr><td style="color:var(--text-3);padding:6px 0">Nada de novo — o sistema já está em dia com este PDF.</td></tr>`;
+
+    UI.openModal("Atualizar processo pelo PDF", `
+      <div style="font-size:12.8px;line-height:1.65">
+        <p style="margin-bottom:12px;color:var(--text-2)">
+          Processo <b style="color:var(--text)">${U.esc(capa.numero)}</b><br>
+          <span style="color:var(--text-3)">${U.esc(capa.orgao || "")}</span>
+        </p>
+        <div style="display:flex;gap:22px;margin-bottom:14px;flex-wrap:wrap">
+          <span><b style="font-size:16px">${doPdf.length}</b> <span style="color:var(--text-3)">no PDF</span></span>
+          <span><b style="font-size:16px">${atuais.length}</b> <span style="color:var(--text-3)">já no sistema</span></span>
+          <span><b style="font-size:16px;color:var(--accent)">${novos.length}</b> <span style="color:var(--text-3)">com Id novo</span></span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:7px;margin-bottom:14px">
+          <label style="display:flex;gap:8px;align-items:flex-start;cursor:pointer">
+            <input type="radio" name="modoPdf" value="substituir" ${primeiraVez ? "checked" : ""} style="margin-top:3px">
+            <span>Usar o histórico do PDF <b>no lugar</b> do atual — fica igual aos autos oficiais.
+              ${primeiraVez ? `<br><span style="color:var(--text-3)">Recomendado agora: o histórico atual foi digitado à mão e não dá para casar uma a uma com as do PDF.</span>` : ""}</span>
+          </label>
+          <label style="display:flex;gap:8px;align-items:flex-start;cursor:pointer">
+            <input type="radio" name="modoPdf" value="acrescentar" ${primeiraVez ? "" : "checked"} style="margin-top:3px">
+            <span>Somente <b>acrescentar</b> as ${novos.length} movimentações com Id novo, mantendo o que já está gravado.</span>
+          </label>
+        </div>
+        ${Object.keys(preencher).length ? `<p style="margin-bottom:12px;color:var(--text-2)">Também vou preencher campos que estão em branco no cadastro: <b style="color:var(--text)">${U.esc(Object.keys(preencher).join(", "))}</b>.</p>` : ""}
+        ${alerta.length ? `<div style="border-left:3px solid var(--orange);padding:8px 12px;margin-bottom:12px;background:var(--orange-soft);border-radius:0 6px 6px 0">
+          <b>Confira se abre prazo.</b> Há ${alerta.length} movimentação(ões) do tipo que costuma abrir prazo (sentença, decisão, intimação). O sistema não cria prazo sozinho — isso depende de leitura, então cadastre à mão o que for o caso.</div>` : ""}
+        <div style="max-height:230px;overflow:auto;border:1px solid var(--line);border-radius:8px;padding:8px 12px">
+          <table style="width:100%;border-collapse:collapse;font-size:12.3px">${lista}</table>
+        </div>
+        <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:16px">
+          <button class="btn sm" id="pdfCancelar">Cancelar</button>
+          <button class="btn primary sm" id="pdfConfirmar">Atualizar processo</button>
+        </div>
+      </div>`);
+
+    document.getElementById("pdfCancelar").addEventListener("click", UI.closeModal);
+    document.getElementById("pdfConfirmar").addEventListener("click", async (ev) => {
+      const btn = ev.currentTarget;
+      btn.disabled = true; btn.textContent = "Salvando...";
+      const escolhido = document.querySelector("input[name=modoPdf]:checked");
+      const modo = escolhido ? escolhido.value : "acrescentar";
+      const finais = (modo === "substituir" ? doPdf.slice() : atuais.concat(novos))
+        .sort((a, b) => String(a.data ?? "").localeCompare(String(b.data ?? "")));
+      finais.forEach((m, i) => { m.codigo = `MOV-${String(i + 1).padStart(3, "0")}`; });
+      const ultima = finais.length ? finais[finais.length - 1].data : proc.ultimaMovimentacao;
+      try{
+        const { error } = await sb.from("processos")
+          .update({ movimentacoes: finais, ultimaMovimentacao: ultima, ...preencher })
+          .eq("codigo", proc.codigo);
+        if (error) throw error;
+        await refreshFromSupabase();
+        UI.closeModal();
+        Toast.show(`Processo atualizado: ${finais.length} movimentações gravadas.`, "ok", 4500);
+        const atualizado = Store.state.index["processos"]?.get(String(proc.codigo));
+        if (atualizado) Inspector.open("processos", atualizado);
+      } catch(e){
+        btn.disabled = false; btn.textContent = "Atualizar processo";
+        Toast.show("Erro ao salvar: " + e.message, "err", 6000);
+      }
+    });
+  }
+
+  return { importar, _cabecalho: cabecalho, _documentos: documentos, _textoDaCapa: textoDaCapa };
+})();
 
 const CRUD = (() => {
   function refOptions(refEntity, current){
