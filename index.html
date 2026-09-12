@@ -727,15 +727,31 @@ const U = (() => {
     const dd = new Date(d); dd.setHours(0,0,0,0);
     return Math.round((dd - today) / 86400000);
   }
-  function fmtMoney(v){
-    let n = v;
-    if (typeof v === "string"){
-      const clean = v.replace(/[R$\s.]/g,"").replace(",",".");
-      n = parseFloat(clean);
-      if (isNaN(n)) return v;
+  // Converte texto em número de dinheiro entendendo os dois formatos que
+  // circulam no sistema: o brasileiro digitado por gente ("64.840,00", onde o
+  // ponto separa milhar) e o do banco de dados ("64840.00", onde o ponto é
+  // decimal). Apagar o ponto sempre multiplicava o valor do banco por 100.
+  function paraNumero(v){
+    if (typeof v === "number") return v;
+    let s = String(v ?? "").replace(/[R$\s ]/g, "");
+    if (!s) return NaN;
+    const negativo = /^-/.test(s);
+    s = s.replace(/-/g, "");
+    const pontos = (s.match(/\./g) || []).length;
+    if (s.includes(",")){
+      s = s.replace(/\./g, "").replace(",", ".");   // 64.840,00 -> 64840.00
+    } else if (pontos === 1 && /\.\d{1,2}$/.test(s)){
+      // 64840.00 — ponto decimal do banco, fica como está
+    } else {
+      s = s.replace(/\./g, "");                     // 64.840 -> 64840
     }
-    if (typeof n !== "number" || isNaN(n)) return String(v ?? "");
-    return n.toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
+    const n = parseFloat(s);
+    return isNaN(n) ? NaN : (negativo ? -n : n);
+  }
+  function fmtMoney(v){
+    const n = paraNumero(v);
+    if (isNaN(n)) return String(v ?? "");
+    return n.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
   }
   const looksLikeDateKey  = k => /data|date|prazo(?!s)|venc|distribui|audiencia$|inicio|fim|criad|atualizad|movimenta/i.test(k);
   const looksLikeMoneyKey = k => /valor|honorario|custas|preco|montante/i.test(k);
@@ -776,7 +792,7 @@ const U = (() => {
     get(k, d){ try{ const v = localStorage.getItem(k); return v == null ? (k in mem ? mem[k] : d) : JSON.parse(v);}catch{ return k in mem ? mem[k] : d; } },
     set(k, v){ mem[k]=v; try{ localStorage.setItem(k, JSON.stringify(v)); }catch{} }
   };
-  return { esc, debounce, norm, parseDate, fmtDate, fmtDateShort, daysUntil, fmtMoney,
+  return { esc, debounce, norm, parseDate, fmtDate, fmtDateShort, daysUntil, fmtMoney, paraNumero,
            looksLikeDateKey, looksLikeMoneyKey, isPlainObj, humanize, highlight, download, store };
 })();
 
@@ -1815,7 +1831,7 @@ const Views = (() => {
     // estatísticas gerais textuais
     const valores = procName ? cols[procName].map(r => {
       let v = Store.get(r,"valor","valorCausa","valorDaCausa");
-      if (typeof v === "string") v = parseFloat(v.replace(/[R$\s.]/g,"").replace(",","."));
+      v = U.paraNumero(v);
       return typeof v === "number" && !isNaN(v) ? v : 0;
     }).reduce((s,x)=>s+x,0) : 0;
     const vencidos = prazoName ? cols[prazoName].filter(r => {
@@ -1900,7 +1916,7 @@ const Views = (() => {
         col.sortVal = r => U.parseDate(r[k]) || String(r[k] ?? "");
       } else if (U.looksLikeMoneyKey(k)){
         col.render = r => U.esc(U.fmtMoney(r[k]));
-        col.sortVal = r => { let v=r[k]; if (typeof v==="string") v=parseFloat(v.replace(/[R$\s.]/g,"").replace(",",".")); return typeof v==="number"&&!isNaN(v)?v:0; };
+        col.sortVal = r => { const v = U.paraNumero(r[k]); return isNaN(v) ? 0 : v; };
       }
       return col;
     });
